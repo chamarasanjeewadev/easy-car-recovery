@@ -1,13 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "easy-car-recovery",
-  "main": "dist/server/server.js",
+  "main": "@tanstack/react-start/server-entry",
   "compatibility_date": "2026-05-01",
   "compatibility_flags": ["nodejs_compat"],
-  "assets": {
-    "directory": "dist/client",
-    "binding": "ASSETS"
-  },
   "vars": {
     "TOWMYCAR_API_BASE_URL": "https://api.towmycar.uk"
   },
