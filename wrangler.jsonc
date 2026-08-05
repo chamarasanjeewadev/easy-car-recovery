@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "easy-car-recovery",
+  "main": "dist/server/server.js",
+  "compatibility_date": "2026-05-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  },
+  "vars": {
+    "VEHICLE_VERIFICATION_PROVIDER": "PAID",
+    "VEHICLE_REGISTRATION_API_URL": "https://api.checkcardetails.co.uk/vehicledata/ukvehicledata"
+  },
+  "observability": { "enabled": true, "head_sampling_rate": 1 }
+}

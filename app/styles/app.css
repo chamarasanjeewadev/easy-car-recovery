@@ -1,0 +1,80 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter/index.css";
+
+@theme {
+  --color-surface: #f9faf4;
+  --color-surface-low: #f3f4ee;
+  --color-surface-c: #edeee8;
+  --color-surface-high: #e8e9e3;
+  --color-surface-highest: #e2e3dd;
+  --color-surface-dim: #d9dbd5;
+  --color-on-surface: #1a1c19;
+  --color-on-surface-variant: #444936;
+  --color-inverse-surface: #2e312d;
+  --color-inverse-on-surface: #f0f1eb;
+  --color-outline: #747964;
+  --color-outline-variant: #c4c9b0;
+  --color-primary: #4e6700;
+  --color-primary-c: #88b000;
+  --color-primary-fixed: #c6f251;
+  --color-primary-fixed-dim: #abd535;
+  --color-on-primary: #ffffff;
+  --color-on-primary-c: #2e3e00;
+  --color-on-primary-fixed: #151f00;
+  --color-tertiary-c: #93ad35;
+  --color-error: #ba1a1a;
+
+  --radius-sm: 0.5rem;
+  --radius: 1rem;
+  --radius-md: 1.5rem;
+  --radius-lg: 2rem;
+  --radius-xl: 3rem;
+
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 2px 4px rgb(26 28 25 / 0.04), 0 16px 40px rgb(26 28 25 / 0.06);
+  --shadow-float: 0 4px 8px rgb(26 28 25 / 0.06), 0 20px 48px rgb(26 28 25 / 0.08);
+}
+
+@utility container-app {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+@utility hero-gradient {
+  background:
+    radial-gradient(60% 60% at 88% 8%, rgb(136 176 0 / 0.22), transparent 60%),
+    linear-gradient(135deg, rgb(198 242 81 / 0.35), transparent 55%);
+}
+
+@utility lime-gradient {
+  background: linear-gradient(135deg, var(--color-primary-c) 0%, var(--color-primary-fixed) 100%);
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+html, body {
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-primary-fixed);
+  color: var(--color-on-primary-fixed);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-primary-c);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
