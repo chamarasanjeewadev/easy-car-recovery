@@ -13,6 +13,9 @@ import { Button } from '~/components/ui/button'
 
 export const Route = createFileRoute('/date')({
   validateSearch: bookingSearchSchema,
+  head: () => ({
+    meta: [{ name: 'robots', content: 'noindex' }],
+  }),
   component: DatePage,
 })
 
@@ -57,7 +60,6 @@ function DatePage() {
   const month = buildMonth(ref, basePrice)
   const selected = month.days.find((d) => d?.iso === date)
   const finalTotal = selected?.price ?? basePrice
-  const savings = selected?.isCheap ? 18 : 0
 
   return (
     <div className="container-app py-6 md:py-8">
@@ -84,7 +86,7 @@ function DatePage() {
             <TimeSlotGrid value={slot} onChange={setSlot} />
             <div className="mt-4 flex items-center gap-2.5 rounded-[var(--radius)] bg-[rgba(136,176,0,0.10)] px-4 py-3 text-sm font-medium text-primary">
               <Icon name="clock" size={14} />
-              Most {slot.split(' ')[0]} slots fill by 6pm the day before.
+              Need recovery today? Pick today's date and we'll treat it as urgent.
             </div>
           </div>
         </div>
@@ -97,15 +99,9 @@ function DatePage() {
               { label: 'Route', value: `${search.from || 'NW1'} → ${search.to || 'OX2'}` },
             ]}
             total={finalTotal}
-            ctaLabel="Continue to payment"
-            ctaHref={{ to: '/pay', search: { ...search, date, slot } }}
-            fine={
-              savings ? (
-                <span className="font-semibold text-primary">You're saving £{savings} picking off-peak.</span>
-              ) : (
-                <>Free cancellation up to 1 hour before {slot.split(' ')[0]}.</>
-              )
-            }
+            ctaLabel="Continue"
+            ctaHref={{ to: '/details', search: { ...search, date, slot } }}
+            fine="Indicative price — no payment now. We confirm before dispatch."
           />
         </aside>
       </div>

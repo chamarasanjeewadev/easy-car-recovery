@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /details
+Disallow: /success
+
+Sitemap: https://easycarrecovery.co.uk/sitemap.xml

@@ -8,8 +8,6 @@ const NAV = [
   { label: 'Home', to: '/' },
   { label: 'Services', to: '/#services' },
   { label: 'How it works', to: '/#how' },
-  { label: 'Coverage', to: '/#coverage' },
-  { label: 'Help', to: '/#help' },
 ] as const
 
 export function Header() {

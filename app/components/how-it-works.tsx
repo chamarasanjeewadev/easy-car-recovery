@@ -3,19 +3,19 @@ const STEPS = [
     n: 1,
     title: 'Tell us where',
     body:
-      "Enter your reg, pick-up and drop-off. We pull your vehicle from DVLA and quote you in seconds — fixed, all-inclusive.",
+      'Enter your reg, pick-up and drop-off. We verify your vehicle and give you an instant indicative price.',
   },
   {
     n: 2,
     title: 'Pick a time',
     body:
-      'Now, in two hours, or next Tuesday. Off-peak slots are cheaper — we show which days save you the most.',
+      'Now, later today, or next week. Choose the day and pick-up window that suits you best.',
   },
   {
     n: 3,
-    title: 'Track it live',
+    title: 'We confirm & dispatch',
     body:
-      "Live driver tracking, photo handover, and your invoice in your inbox. That's it — no follow-up calls.",
+      'Our team confirms availability and the final price with you, then dispatches the nearest vetted recovery driver.',
   },
 ]
 
@@ -28,7 +28,7 @@ export function HowItWorks() {
           How it works
         </span>
         <h2 className="mt-3.5 text-[clamp(28px,3.6vw,44px)] font-bold leading-tight tracking-[-0.015em]">
-          Three taps. No phone calls — unless you want them.
+          Three quick steps — we handle the rest.
         </h2>
       </div>
       <div className="grid gap-4 md:grid-cols-3">

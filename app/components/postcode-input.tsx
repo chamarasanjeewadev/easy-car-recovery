@@ -5,6 +5,18 @@ export interface PlaceValue {
   description: string
   lat: number
   lng: number
+  postcode?: string
+}
+
+const UK_POSTCODE_RE = /\b([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})\b/i
+
+function extractPostcode(
+  components: google.maps.GeocoderAddressComponent[] | undefined,
+  address: string,
+): string | undefined {
+  const fromComponents = components?.find((c) => c.types.includes('postal_code'))?.long_name
+  if (fromComponents) return fromComponents
+  return UK_POSTCODE_RE.exec(address)?.[1]?.toUpperCase()
 }
 
 interface PostcodeInputProps {
@@ -83,14 +95,20 @@ export function PostcodeInput({
     setPredictions([])
     if (!placesRef.current || !onPick) return
     placesRef.current.getDetails(
-      { placeId: p.place_id, fields: ['geometry', 'formatted_address'], sessionToken: sessionToken.current ?? undefined },
+      {
+        placeId: p.place_id,
+        fields: ['geometry', 'formatted_address', 'address_components'],
+        sessionToken: sessionToken.current ?? undefined,
+      },
       (detail) => {
         const loc = detail?.geometry?.location
         if (!loc) return
+        const description = detail.formatted_address ?? p.description
         onPick({
-          description: detail.formatted_address ?? p.description,
+          description,
           lat: loc.lat(),
           lng: loc.lng(),
+          postcode: extractPostcode(detail.address_components, description),
         })
         sessionToken.current = new google.maps.places.AutocompleteSessionToken()
       },

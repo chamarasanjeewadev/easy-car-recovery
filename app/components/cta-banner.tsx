@@ -42,8 +42,8 @@ export function CtaBanner() {
         <div className="rounded-[var(--radius-md)] bg-black/[0.08] p-6 backdrop-blur-md">
           <Row label="Coverage" value="England · Scotland · Wales" />
           <Row label="Operating" value="24 / 7 / 365" />
-          <Row label="Avg. response" value="38 minutes" />
-          <Row label="Price match" value="Yes — refund on the spot" />
+          <Row label="Upfront payment" value="None" />
+          <Row label="Final price" value="Confirmed before dispatch" />
         </div>
       </div>
     </section>

@@ -22,8 +22,8 @@ export function buildMonth(reference: Date, basePrice: number): { label: string;
   const days: (CalendarDay | null)[] = []
   for (let i = 0; i < firstDow; i++) days.push(null)
 
-  let cheapest: CalendarDay | null = null
-
+  // Flat indicative price for every bookable day — the final price is
+  // confirmed by the recovery team, so the calendar never invents discounts.
   for (let d = 1; d <= daysInMonth; d++) {
     const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
     const date = new Date(year, month, d)
@@ -31,30 +31,23 @@ export function buildMonth(reference: Date, basePrice: number): { label: string;
     const isWeekend = dow === 0 || dow === 6
     const isPast = date < today
     const isToday = date.getTime() === today.getTime()
-    const isCheap = !isPast && !isWeekend && d % 4 === 1
-    const price = isPast ? 0 : isWeekend ? basePrice + 24 : isCheap ? Math.max(40, basePrice - 18) : basePrice
 
-    const cell: CalendarDay = {
+    days.push({
       iso,
       day: d,
       month: firstOfMonth.toLocaleString('en-GB', { month: 'short' }),
       isWeekend,
       isPast,
       isToday,
-      isCheap,
-      price,
-    }
-    days.push(cell)
-
-    if (!isPast && (cheapest === null || cell.price < cheapest.price)) {
-      cheapest = cell
-    }
+      isCheap: false,
+      price: isPast ? 0 : basePrice,
+    })
   }
 
   return {
     label: firstOfMonth.toLocaleString('en-GB', { month: 'long', year: 'numeric' }),
     days,
-    cheapestIso: cheapest?.iso ?? null,
+    cheapestIso: null,
   }
 }
 

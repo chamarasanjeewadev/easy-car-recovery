@@ -76,13 +76,10 @@ export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps
 
       <div className="mt-4 flex flex-wrap gap-4 border-t border-surface-high pt-4 text-sm text-on-surface-variant">
         <span className="inline-flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-sm bg-[rgba(136,176,0,0.4)]" />
-          Off-peak (save up to £18)
-        </span>
-        <span className="inline-flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-sm bg-inverse-surface" />
           Selected
         </span>
+        <span>Indicative price — confirmed before dispatch</span>
       </div>
     </div>
   )

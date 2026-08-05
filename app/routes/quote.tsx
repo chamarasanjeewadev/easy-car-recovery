@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { bookingSearchSchema, type Condition, type Size } from '~/lib/booking-search'
 import { conditionLabel, priceQuote, sizeLabel } from '~/lib/mock-quote'
-import { lookupVehicleFn, type VehicleResult } from '~/lib/api/lookup-vehicle'
+import { lookupVehicleFn, titleCase, type VehicleResult } from '~/lib/api/lookup-vehicle'
 import { approxRoadMiles } from '~/lib/distance'
 import { Stepper } from '~/components/stepper'
 import { RouteMiniMap } from '~/components/route-mini-map'
@@ -15,6 +15,17 @@ import { Button } from '~/components/ui/button'
 
 export const Route = createFileRoute('/quote')({
   validateSearch: bookingSearchSchema,
+  head: () => ({
+    meta: [
+      { title: 'Get a recovery quote — Easy Car Recovery' },
+      {
+        name: 'description',
+        content:
+          'Enter your reg and locations for an instant indicative vehicle recovery quote. No payment online.',
+      },
+    ],
+    links: [{ rel: 'canonical', href: 'https://easycarrecovery.co.uk/quote' }],
+  }),
   component: QuotePage,
 })
 
@@ -52,7 +63,7 @@ function QuotePage() {
 
   const quote = priceQuote({ size, condition, distanceMiles: distanceMi })
 
-  // DVLA lookup whenever reg from search changes
+  // Vehicle lookup whenever reg from search changes
   useEffect(() => {
     const reg = (search.reg ?? '').replace(/\s+/g, '').toUpperCase()
     if (reg.length < 2) {
@@ -106,7 +117,13 @@ function QuotePage() {
     setFromText(p.description)
     navigate({
       to: '/quote',
-      search: (prev) => ({ ...prev, from: p.description, fromLat: p.lat, fromLng: p.lng }),
+      search: (prev) => ({
+        ...prev,
+        from: p.description,
+        fromLat: p.lat,
+        fromLng: p.lng,
+        fromPostcode: p.postcode,
+      }),
       replace: true,
     })
   }
@@ -115,7 +132,13 @@ function QuotePage() {
     setToText(p.description)
     navigate({
       to: '/quote',
-      search: (prev) => ({ ...prev, to: p.description, toLat: p.lat, toLng: p.lng }),
+      search: (prev) => ({
+        ...prev,
+        to: p.description,
+        toLat: p.lat,
+        toLng: p.lng,
+        toPostcode: p.postcode,
+      }),
       replace: true,
     })
   }
@@ -142,11 +165,11 @@ function QuotePage() {
               <span className="text-xs font-semibold uppercase tracking-[0.08em] text-on-surface-variant">Vehicle</span>
               {vehicle && !vehicleErr && (
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(136,176,0,0.16)] px-2.5 py-1 text-xs font-bold text-primary">
-                  <Icon name="check" size={12} stroke={2.5} /> Verified · DVLA
+                  <Icon name="check" size={12} stroke={2.5} /> Vehicle verified
                 </span>
               )}
               {vehicleBusy && (
-                <span className="text-xs text-on-surface-variant">Checking DVLA…</span>
+                <span className="text-xs text-on-surface-variant">Checking vehicle…</span>
               )}
             </div>
 
@@ -157,11 +180,11 @@ function QuotePage() {
                 </div>
                 <div className="min-w-[160px] flex-1">
                   <div className="text-lg font-bold tracking-tight">
-                    {vehicle.make} {vehicle.model}
+                    {titleCase(vehicle.makeModel || vehicle.make)}
                   </div>
-                  <div className="text-sm text-on-surface-variant">
-                    {vehicle.year} · {vehicle.fuel} · {vehicle.colour} · MOT {vehicle.motUntil}
-                  </div>
+                  {vehicle.color && (
+                    <div className="text-sm text-on-surface-variant">{titleCase(vehicle.color)}</div>
+                  )}
                 </div>
                 <PlateInput value={vehicle.plate} onChange={() => {}} size="sm" readOnly />
               </div>
@@ -222,9 +245,9 @@ function QuotePage() {
             <RouteMiniMap fromLabel={fromLabel} toLabel={toLabel} />
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <Stat label="Distance" value={distanceUnknown ? 'Pick both' : `${distanceMi} mi`} />
-              <Stat label="ETA" value={`${quote.etaMin} min`} />
-              <Stat label="Driver" value="Auto-assigned" />
-              <Stat label="Vehicle" value="Flatbed" />
+              <Stat label="Availability" value="24/7" />
+              <Stat label="Driver" value="Vetted network" />
+              <Stat label="Truck" value="Flatbed" />
             </div>
           </div>
 
@@ -266,21 +289,6 @@ function QuotePage() {
             )}
           </div>
 
-          <label className="flex cursor-pointer items-center gap-3.5 rounded-[var(--radius-md)] border-2 border-dashed border-outline-variant bg-white px-5 py-4 transition hover:border-primary-c hover:bg-surface-low">
-            <div className="grid h-11 w-11 place-items-center rounded-full bg-surface-c">
-              <Icon name="upload" size={18} />
-            </div>
-            <div className="flex-1">
-              <div className="text-[15px] font-bold">
-                Add a photo of the vehicle <span className="font-normal text-on-surface-variant">· optional</span>
-              </div>
-              <div className="text-[13px] text-on-surface-variant">
-                Helps us bring the right strap and winch. JPG/PNG, max 10 MB.
-              </div>
-            </div>
-            <Button variant="tonal" size="sm" type="button">Choose</Button>
-            <input type="file" accept="image/*" className="hidden" />
-          </label>
         </div>
 
         <aside className="lg:sticky lg:top-24">
@@ -297,12 +305,16 @@ function QuotePage() {
               { label: 'VAT included', value: '—' },
             ]}
             total={quote.total}
-            fine={distanceUnknown ? 'Pick locations to lock in the price' : 'Locked in for 24h · No surge pricing'}
+            fine={
+              distanceUnknown
+                ? 'Pick locations for an accurate estimate'
+                : 'Indicative price — confirmed before dispatch'
+            }
             ctaLabel="Pick a time"
             ctaHref={{ to: '/date', search: { ...search, size, condition } }}
           />
           <p className="mt-3 text-center text-xs text-on-surface-variant">
-            Free cancellation up to 1 hour before pick-up.
+            No payment taken online — we confirm the final price with you first.
           </p>
         </aside>
       </div>

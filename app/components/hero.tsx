@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router'
 import { Button } from './ui/button'
 import { Icon } from './icon'
 import { HeroCard } from './hero-card'
-import { FloatCard } from './float-card'
 
 export function Hero() {
   return (
@@ -15,7 +14,7 @@ export function Hero() {
               aria-hidden
               className="h-2 w-2 rounded-full bg-primary-c shadow-[0_0_0_4px_rgba(136,176,0,0.18)]"
             />
-            Available now · 41 drivers on shift
+            Recovery requests handled 24/7
           </span>
           <h1 className="text-[clamp(40px,6vw,72px)] font-bold leading-[1.05] tracking-[-0.025em]">
             Stay moving,
@@ -23,8 +22,8 @@ export function Hero() {
             no matter <span className="text-primary">what.</span>
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-on-surface-variant">
-            Fixed-price vehicle recovery across England, Scotland and Wales. DBS-checked drivers, live tracking,
-            and zero surge fees — book in 30 seconds.
+            Vehicle recovery across England, Scotland and Wales. Get an instant indicative quote from a
+            nationwide network of vetted recovery drivers — no membership, no upfront payment.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
@@ -40,15 +39,14 @@ export function Hero() {
           </div>
 
           <div className="mt-9 flex flex-wrap gap-8 border-t border-surface-high pt-6">
-            <Trust k="4.86 / 5" v="14,902 reviews" />
-            <Trust k="38 min" v="Avg. ETA · greater London" />
-            <Trust k="£0" v="Cancellation up to 1h out" />
+            <Trust k="Nationwide" v="England · Scotland · Wales" />
+            <Trust k="24/7" v="Requests handled any time" />
+            <Trust k="£0 upfront" v="Pay nothing to book online" />
           </div>
         </div>
 
         <div className="relative">
           <HeroCard />
-          <FloatCard />
         </div>
       </div>
     </section>

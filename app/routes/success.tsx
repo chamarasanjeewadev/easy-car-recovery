@@ -6,12 +6,15 @@ import { Button } from '~/components/ui/button'
 
 export const Route = createFileRoute('/success')({
   validateSearch: successSearchSchema,
+  head: () => ({
+    meta: [{ name: 'robots', content: 'noindex' }],
+  }),
   component: SuccessPage,
 })
 
 function SuccessPage() {
-  const { ref, total, date, slot } = Route.useSearch()
-  const niceDate = date ? formatLongDate(date) : 'your scheduled day'
+  const { requestId, reg, date, slot, from, to, total } = Route.useSearch()
+  const niceDate = date ? formatLongDate(date) : 'your preferred day'
 
   return (
     <div className="container-app max-w-[640px] py-20 md:py-24">
@@ -20,32 +23,36 @@ function SuccessPage() {
       </div>
       <span className="mt-7 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
         <span className="h-px w-4 bg-current" />
-        Booking confirmed
+        Request received
       </span>
       <h1 className="mt-3 text-[clamp(32px,5vw,48px)] font-bold leading-tight tracking-[-0.02em]">
-        We'll see you on {niceDate}.
+        Your recovery request is in.
       </h1>
       <p className="mt-4 text-[17px] text-on-surface-variant">
-        A confirmation is on its way to your inbox. Live tracking opens 30 minutes before pick-up — we'll text you a link.
+        Our recovery team will contact you on the number you provided to confirm availability and the
+        final price before anything is dispatched.
       </p>
 
       <div className="my-8 rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
-        <Row label="Reference" value={ref} />
-        <Row label="Vehicle" value="VW Golf · LG19 KXR" />
-        <Row label="Pick-up" value={slot ? `${niceDate} · ${slot}` : niceDate} />
-        <Row label="Driver" value="Assigned 30 min before" />
-        <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
-          <span className="text-on-surface-variant text-sm">Paid</span>
-          <strong className="text-[28px] font-bold tracking-[-0.02em]">£{total ?? '—'}</strong>
-        </div>
+        <Row label="Reference" value={`#${requestId}`} />
+        {reg && <Row label="Vehicle reg" value={reg.toUpperCase()} />}
+        {from && <Row label="Route" value={`${from} → ${to ?? 'TBC'}`} />}
+        <Row label="Preferred pick-up" value={slot ? `${niceDate} · ${slot}` : niceDate} />
+        {total != null && (
+          <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
+            <span className="text-on-surface-variant text-sm">Indicative price</span>
+            <strong className="text-[28px] font-bold tracking-[-0.02em]">£{total}</strong>
+          </div>
+        )}
       </div>
+
+      <p className="mb-8 text-sm text-on-surface-variant">
+        Keep your reference number handy if you call us about this booking. No payment has been taken.
+      </p>
 
       <div className="flex flex-wrap gap-3">
         <Button asChild size="lg">
           <Link to="/">Back to home</Link>
-        </Button>
-        <Button variant="outline" size="lg">
-          Add to calendar
         </Button>
       </div>
     </div>

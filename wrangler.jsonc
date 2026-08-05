@@ -9,8 +9,7 @@
     "binding": "ASSETS"
   },
   "vars": {
-    "VEHICLE_VERIFICATION_PROVIDER": "PAID",
-    "VEHICLE_REGISTRATION_API_URL": "https://api.checkcardetails.co.uk/vehicledata/ukvehicledata"
+    "TOWMYCAR_API_BASE_URL": "https://api.towmycar.uk"
   },
   "observability": { "enabled": true, "head_sampling_rate": 1 }
 }
