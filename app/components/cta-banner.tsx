@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Button } from './ui/button'
 import { Icon } from './icon'
+import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 
 export function CtaBanner() {
   return (
@@ -12,14 +13,15 @@ export function CtaBanner() {
             Ready when you are
           </span>
           <h2 className="mt-3.5 text-[clamp(36px,5vw,60px)] font-bold leading-[1.05] tracking-[-0.025em]">
-            One price.
+            Broken down?
             <br />
-            One driver.
+            Get quotes
             <br />
-            One tap.
+            in minutes.
           </h2>
           <p className="mt-4 max-w-[44ch] text-[17px] opacity-80">
-            No memberships, no annual fees. Pay-as-you-go recovery — only when you actually need it.
+            No memberships, no annual fees. Submit your request and vetted recovery drivers quote
+            your job — only when you actually need it.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild variant="dark" size="lg" className="bg-on-surface hover:bg-inverse-surface text-white">
@@ -27,13 +29,9 @@ export function CtaBanner() {
                 Book a recovery <Icon name="arrow-right" size={16} />
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outlineLight"
-              size="lg"
-            >
-              <a href="tel:08081570111">
-                <Icon name="phone" size={16} /> 0808 157 0111
+            <Button asChild variant="outlineLight" size="lg">
+              <a href={SUPPORT_PHONE_TEL}>
+                <Icon name="phone" size={16} /> {SUPPORT_PHONE_DISPLAY}
               </a>
             </Button>
           </div>
@@ -43,7 +41,7 @@ export function CtaBanner() {
           <Row label="Coverage" value="England · Scotland · Wales" />
           <Row label="Operating" value="24 / 7 / 365" />
           <Row label="Upfront payment" value="None" />
-          <Row label="Final price" value="Confirmed before dispatch" />
+          <Row label="Pricing" value="Quoted by recovery drivers" />
         </div>
       </div>
     </section>

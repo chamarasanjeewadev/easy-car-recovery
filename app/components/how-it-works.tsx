@@ -1,21 +1,21 @@
 const STEPS = [
   {
     n: 1,
-    title: 'Tell us where',
+    title: 'Tell us your journey',
     body:
-      'Enter your reg, pick-up and drop-off. We verify your vehicle and give you an instant indicative price.',
+      'Enter your reg, pick-up and drop-off. We verify your vehicle against official DVLA data in seconds.',
   },
   {
     n: 2,
-    title: 'Pick a time',
+    title: 'Drivers quote your job',
     body:
-      'Now, later today, or next week. Choose the day and pick-up window that suits you best.',
+      'Vetted recovery drivers near you respond with real quotes. Our team calls you with the best options — typically within 15 minutes.',
   },
   {
     n: 3,
-    title: 'We confirm & dispatch',
+    title: 'Confirm & recover',
     body:
-      'Our team confirms availability and the final price with you, then dispatches the nearest vetted recovery driver.',
+      'Agree the price before anything is dispatched, then pay the driver directly. Nothing is charged online.',
   },
 ]
 

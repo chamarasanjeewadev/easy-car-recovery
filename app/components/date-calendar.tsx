@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import { buildMonth, type CalendarDay } from '~/lib/mock-calendar'
+import { buildMonth, type CalendarDay } from '~/lib/calendar'
 import { Icon } from './icon'
 
-interface PriceCalendarProps {
-  basePrice: number
+interface DateCalendarProps {
   value?: string
   onChange: (iso: string) => void
 }
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps) {
+export function DateCalendar({ value, onChange }: DateCalendarProps) {
   const [reference, setReference] = useState(() => {
     if (value) {
       const [y, m] = value.split('-').map(Number)
@@ -23,7 +22,7 @@ export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const month = buildMonth(reference, basePrice)
+  const month = buildMonth(reference)
   const isCurrentMonth =
     reference.getFullYear() === today.getFullYear() && reference.getMonth() === today.getMonth()
 
@@ -64,13 +63,7 @@ export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps
 
       <div className="grid grid-cols-7 gap-1.5">
         {month.days.map((day, i) => (
-          <DayCell
-            key={i}
-            day={day}
-            selected={value === day?.iso}
-            isCheapest={day?.iso === month.cheapestIso}
-            onSelect={onChange}
-          />
+          <DayCell key={i} day={day} selected={value === day?.iso} onSelect={onChange} />
         ))}
       </div>
 
@@ -79,7 +72,7 @@ export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps
           <span className="h-2.5 w-2.5 rounded-sm bg-inverse-surface" />
           Selected
         </span>
-        <span>Indicative price — confirmed before dispatch</span>
+        <span>Recovery drivers quote your job — no prices are set online</span>
       </div>
     </div>
   )
@@ -88,23 +81,19 @@ export function PriceCalendar({ basePrice, value, onChange }: PriceCalendarProps
 function DayCell({
   day,
   selected,
-  isCheapest,
   onSelect,
 }: {
   day: CalendarDay | null
   selected: boolean
-  isCheapest: boolean
   onSelect: (iso: string) => void
 }) {
   if (!day) return <div />
-  const base = 'relative rounded-[var(--radius)] py-2.5 px-1 text-center transition active:scale-[0.97]'
+  const base = 'relative rounded-[var(--radius)] py-3.5 px-1 text-center transition active:scale-[0.97]'
   let cls = base
   if (day.isPast) {
     cls += ' bg-transparent text-outline opacity-50 cursor-not-allowed'
   } else if (selected) {
     cls += ' bg-inverse-surface text-inverse-on-surface'
-  } else if (day.isCheap) {
-    cls += ' bg-[rgba(136,176,0,0.16)] hover:bg-[rgba(136,176,0,0.24)]'
   } else {
     cls += ' bg-surface-low hover:bg-surface-c'
   }
@@ -116,16 +105,10 @@ function DayCell({
       disabled={day.isPast}
       className={cls}
     >
-      {isCheapest && !day.isPast && (
-        <span className="absolute -right-1 -top-1.5 rounded-full bg-primary-c px-1.5 py-0.5 text-[9px] font-extrabold tracking-wider text-on-primary-c">
-          CHEAP
-        </span>
-      )}
       <div className="text-sm font-bold">
         {day.day}
         {day.isToday && <span className="ml-1 inline-block h-1 w-1 rounded-full bg-primary-c align-middle" />}
       </div>
-      <div className="text-[11px] font-semibold opacity-85">£{day.price}</div>
     </button>
   )
 }

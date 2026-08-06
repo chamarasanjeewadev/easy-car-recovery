@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import { bookingSearchSchema } from '~/lib/booking-search'
-import { priceQuote } from '~/lib/mock-quote'
-import { formatLongDate } from '~/lib/mock-calendar'
+import { formatLongDate } from '~/lib/calendar'
 import { approxRoadMiles } from '~/lib/distance'
 import { lookupVehicleFn, titleCase, type VehicleResult } from '~/lib/api/lookup-vehicle'
 import { submitRecoveryRequestFn, type SubmitRequestResult } from '~/lib/api/submit-request'
@@ -72,13 +71,13 @@ function DetailsPage() {
   if (!ready) {
     return (
       <div className="container-app max-w-[560px] py-20 text-center">
-        <h1 className="text-2xl font-bold">Let's finish your quote first</h1>
+        <h1 className="text-2xl font-bold">Let's finish your journey details first</h1>
         <p className="mt-3 text-on-surface-variant">
           We need your vehicle, locations, and a pick-up time before you can book.
         </p>
         <Button asChild size="lg" className="mt-6">
           <Link to="/quote" search={search}>
-            Back to quote
+            Back to your journey
           </Link>
         </Button>
       </div>
@@ -92,12 +91,6 @@ function DetailsPage() {
           { lat: search.toLat, lng: search.toLng },
         )
       : undefined
-
-  const quote = priceQuote({
-    size: search.size ?? 'car',
-    condition: search.condition ?? 'drives',
-    distanceMiles: distanceMi ?? 12,
-  })
 
   const submit = async () => {
     if (busyRef.current) return
@@ -138,7 +131,6 @@ function DetailsPage() {
           email: parsed.data.email,
           mobile: parsed.data.mobile,
           notes: notes.trim() || undefined,
-          indicativeTotal: quote.total,
           distanceMiles: distanceMi,
           termsAcceptedAt: new Date().toISOString(),
         },
@@ -153,7 +145,6 @@ function DetailsPage() {
             slot: search.slot,
             from: search.from,
             to: search.to,
-            total: quote.total,
           },
         })
         return
@@ -318,12 +309,11 @@ function DetailsPage() {
               { label: 'Route', value: `${search.from} → ${search.to ?? 'TBC'}` },
               ...(distanceMi != null ? [{ label: 'Distance', value: `${distanceMi} mi` }] : []),
             ]}
-            total={quote.total}
             ctaLabel="Request recovery"
             onCta={submit}
             disabled={busy}
             busyLabel="Sending your request…"
-            fine="Indicative price — no payment now. We confirm the final price before dispatch."
+            fine="No payment now — drivers respond with quotes and our team confirms with you."
           />
         </aside>
       </div>

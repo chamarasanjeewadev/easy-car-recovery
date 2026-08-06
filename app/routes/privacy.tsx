@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { SITE_NAME, SITE_URL, SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
+import {
+  COMPANY_ADDRESS,
+  COMPANY_NAME,
+  SITE_NAME,
+  SITE_URL,
+  SUPPORT_EMAIL,
+  SUPPORT_EMAIL_HREF,
+  SUPPORT_PHONE_DISPLAY,
+  SUPPORT_PHONE_TEL,
+} from '~/lib/site'
 
 export const Route = createFileRoute('/privacy')({
   head: () => ({
@@ -19,9 +28,14 @@ function PrivacyPage() {
   return (
     <div className="container-app max-w-[760px] py-16">
       <h1 className="text-[clamp(32px,4vw,44px)] font-bold tracking-[-0.02em]">Privacy Policy</h1>
-      <p className="mt-2 text-sm text-on-surface-variant">Last updated 5 August 2026</p>
+      <p className="mt-2 text-sm text-on-surface-variant">Last updated 6 August 2026</p>
 
       <div className="mt-8 space-y-6 text-[15px] leading-relaxed text-on-surface-variant">
+        <Section title="Who is responsible for your data">
+          {SITE_NAME} is a trading style of {COMPANY_NAME}, {COMPANY_ADDRESS}, which is the data
+          controller for the personal data collected through this website.
+        </Section>
+
         <Section title="What we collect">
           When you request a quote or booking we collect: your vehicle registration and the vehicle details
           returned by vehicle-data lookups (make, model, colour, weight); your pick-up and drop-off
@@ -29,8 +43,8 @@ function PrivacyPage() {
         </Section>
 
         <Section title="How we use it">
-          We use these details to price your request, to create and manage your recovery booking on the
-          TowMyCar platform, to match you with recovery drivers near you, and to contact you about your
+          We use these details to create and manage your recovery booking on the TowMyCar platform, to
+          match you with recovery drivers near you who quote your job, and to contact you about your
           booking. We record when you accepted our terms as evidence of consent.
         </Section>
 
@@ -47,7 +61,11 @@ function PrivacyPage() {
 
         <Section title="Your rights">
           Under UK GDPR you can request access to, correction of, or deletion of your personal data, and you
-          can object to or restrict processing. To exercise any of these rights, call{' '}
+          can object to or restrict processing. To exercise any of these rights, email{' '}
+          <a href={SUPPORT_EMAIL_HREF} className="font-semibold text-on-surface underline">
+            {SUPPORT_EMAIL}
+          </a>{' '}
+          or call{' '}
           <a href={SUPPORT_PHONE_TEL} className="font-semibold text-on-surface underline">
             {SUPPORT_PHONE_DISPLAY}
           </a>

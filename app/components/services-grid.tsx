@@ -5,7 +5,6 @@ interface Service {
   ic: IconName
   name: string
   desc: string
-  from: number
   variant?: 'feature' | 'dark'
 }
 
@@ -14,33 +13,28 @@ const SERVICES: Service[] = [
     ic: 'truck',
     name: 'Vehicle recovery',
     desc: 'Flatbed transport for cars, vans and light commercials up to 3.5t.',
-    from: 89,
     variant: 'feature',
   },
   {
     ic: 'battery',
     name: 'Jump start & battery',
-    desc: 'Roadside boost, replacement and fitting for 90% of UK makes.',
-    from: 59,
+    desc: 'Roadside boost and battery help for most makes and models.',
   },
   {
     ic: 'fuel',
     name: 'Wrong fuel & empty',
-    desc: 'On-scene fuel drains, plus 5L delivery across motorway corridors.',
-    from: 129,
+    desc: 'Recovery to a garage when the wrong fuel — or none — leaves you stranded.',
   },
   {
     ic: 'wrench',
-    name: 'Roadside repair',
-    desc: 'Tyre changes, lockouts, minor mechanical fixes — back on the road first.',
-    from: 75,
+    name: 'Breakdown transport',
+    desc: 'Non-runners, accident-damaged and seized vehicles moved safely.',
     variant: 'dark',
   },
   {
     ic: 'zap',
     name: 'EV recovery',
-    desc: 'Specialist flatbed handling for EVs and PHEVs. HV-isolation trained.',
-    from: 119,
+    desc: 'Flatbed handling for EVs and PHEVs, matched to drivers with the right kit.',
   },
 ]
 
@@ -97,10 +91,7 @@ function ServiceCard({ service: s }: { service: Service }) {
       <h3 className="text-[22px] font-bold tracking-tight">{s.name}</h3>
       <p className={`flex-1 text-[15px] leading-relaxed ${descCls}`}>{s.desc}</p>
       <div className="flex items-center justify-between">
-        <div className="text-[13px] opacity-70">
-          From
-          <strong className="ml-1 text-[22px] font-bold tracking-tight opacity-100">£{s.from}</strong>
-        </div>
+        <div className="text-[13px] font-semibold opacity-70">Get quotes</div>
         <span
           className={`grid h-9 w-9 place-items-center rounded-full transition ${arrowBg} ${
             isFeature || isDark ? 'group-hover:-rotate-45' : ''

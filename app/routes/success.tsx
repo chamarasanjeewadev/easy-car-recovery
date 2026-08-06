@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { successSearchSchema } from '~/lib/booking-search'
-import { formatLongDate } from '~/lib/mock-calendar'
+import { formatLongDate } from '~/lib/calendar'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
 
@@ -13,7 +13,7 @@ export const Route = createFileRoute('/success')({
 })
 
 function SuccessPage() {
-  const { requestId, reg, date, slot, from, to, total } = Route.useSearch()
+  const { requestId, reg, date, slot, from, to } = Route.useSearch()
   const niceDate = date ? formatLongDate(date) : 'your preferred day'
 
   return (
@@ -29,8 +29,8 @@ function SuccessPage() {
         Your recovery request is in.
       </h1>
       <p className="mt-4 text-[17px] text-on-surface-variant">
-        Our recovery team will contact you on the number you provided to confirm availability and the
-        final price before anything is dispatched.
+        Recovery drivers in your area are being notified now. Our team will contact you on the number
+        you provided to share quotes and confirm — the network averages a 15-minute response.
       </p>
 
       <div className="my-8 rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
@@ -38,12 +38,6 @@ function SuccessPage() {
         {reg && <Row label="Vehicle reg" value={reg.toUpperCase()} />}
         {from && <Row label="Route" value={`${from} → ${to ?? 'TBC'}`} />}
         <Row label="Preferred pick-up" value={slot ? `${niceDate} · ${slot}` : niceDate} />
-        {total != null && (
-          <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
-            <span className="text-on-surface-variant text-sm">Indicative price</span>
-            <strong className="text-[28px] font-bold tracking-[-0.02em]">£{total}</strong>
-          </div>
-        )}
       </div>
 
       <p className="mb-8 text-sm text-on-surface-variant">

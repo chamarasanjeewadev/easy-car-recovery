@@ -23,6 +23,14 @@ export type BookingSearch = z.infer<typeof bookingSearchSchema>
 export type Size = (typeof sizeOptions)[number]
 export type Condition = (typeof conditionOptions)[number]
 
+export function sizeLabel(size: Size): string {
+  return size === 'car' ? 'Car · saloon' : size === 'suv' ? 'SUV · 4×4' : 'Van · LCV'
+}
+
+export function conditionLabel(condition: Condition): string {
+  return condition === 'drives' ? 'Drives on' : condition === 'rolls' ? 'Non-runner · rolls' : 'Winch required'
+}
+
 export const successSearchSchema = z.object({
   requestId: z.coerce.number(),
   reg: z.string().optional(),
@@ -30,7 +38,6 @@ export const successSearchSchema = z.object({
   slot: z.string().optional(),
   from: z.string().optional(),
   to: z.string().optional(),
-  total: z.coerce.number().optional(),
 })
 
 export type SuccessSearch = z.infer<typeof successSearchSchema>

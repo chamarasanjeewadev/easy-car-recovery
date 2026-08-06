@@ -10,7 +10,6 @@ interface SummaryRow {
 
 interface BookingSummaryProps {
   rows: SummaryRow[]
-  total: number
   fine?: ReactNode
   ctaLabel: string
   onCta?: () => void
@@ -19,7 +18,7 @@ interface BookingSummaryProps {
   busyLabel?: string
 }
 
-export function BookingSummary({ rows, total, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
+export function BookingSummary({ rows, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
   const cta = (
     <Button
       size="lg"
@@ -47,9 +46,8 @@ export function BookingSummary({ rows, total, fine, ctaLabel, onCta, ctaHref, di
             </div>
           ))}
         </div>
-        <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
-          <span className="text-on-surface-variant text-sm">Total</span>
-          <strong className="text-[28px] font-bold tracking-[-0.02em]">£{total}</strong>
+        <div className="mt-3 border-t border-surface-high pt-4 text-sm text-on-surface-variant">
+          Vetted recovery drivers quote your job — we confirm the price with you before dispatch.
         </div>
       </div>
 

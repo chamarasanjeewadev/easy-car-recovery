@@ -1,7 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { conditionOptions, sizeOptions } from '~/lib/booking-search'
-import { conditionLabel, sizeLabel } from '~/lib/mock-quote'
+import { conditionLabel, conditionOptions, sizeLabel, sizeOptions } from '~/lib/booking-search'
 import { normalizeUkMobile } from '~/lib/phone'
 
 const inputSchema = z.object({
@@ -23,7 +22,6 @@ const inputSchema = z.object({
   email: z.string().email(),
   mobile: z.string().min(7),
   notes: z.string().max(2000).optional(),
-  indicativeTotal: z.number(),
   distanceMiles: z.number().optional(),
   termsAcceptedAt: z.string(),
 })
@@ -34,7 +32,7 @@ export type SubmitRequestResult =
   | { ok: true; requestId: number }
   | { ok: false; code: 'DUPLICATE' | 'BLOCKED' | 'VALIDATION' | 'UNAVAILABLE'; message: string }
 
-const TERMS_VERSION = 'ecr-v1'
+const TERMS_VERSION = 'ecr-v2'
 const SOURCE = 'easy-car-recovery' // fits the backend's varchar(20) source column
 
 function todayInLondon(): string {
@@ -104,7 +102,6 @@ export const submitRecoveryRequestFn = createServerFn({ method: 'POST' })
       `Vehicle size: ${sizeLabel(data.size)}`,
       `Condition: ${conditionLabel(data.condition)}`,
       `Preferred pick-up: ${data.date} · ${data.slot}`,
-      `Indicative online price: £${data.indicativeTotal}`,
       ...(data.notes?.trim() ? [`Additional details: ${data.notes.trim()}`] : []),
     ].join('\n')
 

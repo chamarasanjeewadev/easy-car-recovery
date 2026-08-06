@@ -1,4 +1,4 @@
-import { TIME_SLOTS } from '~/lib/mock-calendar'
+import { TIME_SLOTS } from '~/lib/calendar'
 
 interface TimeSlotGridProps {
   value?: string

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { bookingSearchSchema, type Condition, type Size } from '~/lib/booking-search'
-import { conditionLabel, priceQuote, sizeLabel } from '~/lib/mock-quote'
+import { bookingSearchSchema, conditionLabel, sizeLabel, type Condition, type Size } from '~/lib/booking-search'
 import { lookupVehicleFn, titleCase, type VehicleResult } from '~/lib/api/lookup-vehicle'
 import { approxRoadMiles } from '~/lib/distance'
 import { Stepper } from '~/components/stepper'
@@ -17,11 +16,11 @@ export const Route = createFileRoute('/quote')({
   validateSearch: bookingSearchSchema,
   head: () => ({
     meta: [
-      { title: 'Get a recovery quote — Easy Car Recovery' },
+      { title: 'Request vehicle recovery — Easy Car Recovery' },
       {
         name: 'description',
         content:
-          'Enter your reg and locations for an instant indicative vehicle recovery quote. No payment online.',
+          'Tell us your vehicle and route, and get quotes from vetted recovery drivers. No payment online.',
       },
     ],
     links: [{ rel: 'canonical', href: 'https://easycarrecovery.co.uk/quote' }],
@@ -60,8 +59,6 @@ function QuotePage() {
     if (fromCoord && toCoord) return approxRoadMiles(fromCoord, toCoord)
     return FALLBACK_DISTANCE_MI
   }, [fromCoord, toCoord])
-
-  const quote = priceQuote({ size, condition, distanceMiles: distanceMi })
 
   // Vehicle lookup whenever reg from search changes
   useEffect(() => {
@@ -209,9 +206,7 @@ function QuotePage() {
           <div className="rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <span className="text-xs font-semibold uppercase tracking-[0.08em] text-on-surface-variant">Route</span>
-              <span className="text-sm text-on-surface-variant">
-                Total <strong className="ml-1.5 text-lg font-bold text-on-surface">£{quote.total}</strong>
-              </span>
+              <span className="text-[13px] text-on-surface-variant">Drivers quote based on your route</span>
             </div>
 
             <div className="mb-4 grid gap-3 sm:grid-cols-2">
@@ -277,8 +272,8 @@ function QuotePage() {
               onChange={setCondition}
               options={[
                 { value: 'drives', label: 'Drives on' },
-                { value: 'rolls', label: 'Rolls', extra: '+£25' },
-                { value: 'winch', label: 'Winch', extra: '+£60' },
+                { value: 'rolls', label: 'Rolls' },
+                { value: 'winch', label: 'Winch' },
               ]}
             />
             {condition === 'winch' && (
@@ -294,27 +289,20 @@ function QuotePage() {
         <aside className="lg:sticky lg:top-24">
           <BookingSummary
             rows={[
-              { label: `Base · ${sizeLabel(size).split(' ')[0]}`, value: `£${quote.base}` },
               {
-                label: distanceUnknown ? 'Distance · estimate' : `Distance · ${distanceMi} mi`,
-                value: `£${quote.distanceFee}`,
+                label: 'Vehicle',
+                value: vehicle ? titleCase(vehicle.makeModel || vehicle.make) : regInput || 'Enter your reg',
               },
-              ...(quote.conditionFee > 0
-                ? [{ label: conditionLabel(condition), value: `+£${quote.conditionFee}` }]
-                : []),
-              { label: 'VAT included', value: '—' },
+              { label: 'Distance', value: distanceUnknown ? 'Pick both locations' : `${distanceMi} mi` },
+              { label: 'Size', value: sizeLabel(size) },
+              { label: 'Condition', value: conditionLabel(condition) },
             ]}
-            total={quote.total}
-            fine={
-              distanceUnknown
-                ? 'Pick locations for an accurate estimate'
-                : 'Indicative price — confirmed before dispatch'
-            }
+            fine="Recovery drivers quote your job individually — no payment online."
             ctaLabel="Pick a time"
             ctaHref={{ to: '/date', search: { ...search, size, condition } }}
           />
           <p className="mt-3 text-center text-xs text-on-surface-variant">
-            No payment taken online — we confirm the final price with you first.
+            No payment taken online — we confirm the price with you first.
           </p>
         </aside>
       </div>

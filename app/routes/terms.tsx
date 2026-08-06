@@ -1,5 +1,14 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { SITE_NAME, SITE_URL, SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
+import {
+  COMPANY_ADDRESS,
+  COMPANY_NAME,
+  SITE_NAME,
+  SITE_URL,
+  SUPPORT_EMAIL,
+  SUPPORT_EMAIL_HREF,
+  SUPPORT_PHONE_DISPLAY,
+  SUPPORT_PHONE_TEL,
+} from '~/lib/site'
 
 export const Route = createFileRoute('/terms')({
   head: () => ({
@@ -19,20 +28,21 @@ function TermsPage() {
   return (
     <div className="container-app max-w-[760px] py-16">
       <h1 className="text-[clamp(32px,4vw,44px)] font-bold tracking-[-0.02em]">Terms of Service</h1>
-      <p className="mt-2 text-sm text-on-surface-variant">Version ecr-v1 · Last updated 5 August 2026</p>
+      <p className="mt-2 text-sm text-on-surface-variant">Version ecr-v2 · Last updated 6 August 2026</p>
 
       <div className="prose-ecr mt-8 space-y-6 text-[15px] leading-relaxed text-on-surface-variant">
         <Section title="1. Who we are">
-          {SITE_NAME} ("we", "us") is a booking service for vehicle recovery. We operate as part of the
-          TowMyCar recovery network: when you submit a request through this website, it is passed to our
-          network of independent, vetted recovery drivers, and our team coordinates the job with you.
+          {SITE_NAME} ("we", "us") is a trading style of {COMPANY_NAME}, {COMPANY_ADDRESS}. We are a
+          booking service for vehicle recovery and part of the TowMyCar recovery network: when you submit
+          a request through this website, it is passed to our network of independent, vetted recovery
+          drivers, and our team coordinates the job with you.
         </Section>
 
-        <Section title="2. Quotes are indicative">
-          Prices shown on this website are indicative estimates based on the details you provide (vehicle,
-          locations, distance, condition and timing). They are not a binding contract price. Before any
-          driver is dispatched, our team will contact you to confirm availability and the final price. You
-          are free to decline at that point at no cost.
+        <Section title="2. How pricing works">
+          We do not display prices on this website. When you submit a request, independent recovery
+          drivers respond with quotes for your job, and our team contacts you to confirm availability
+          and the price. No driver is dispatched until you have agreed the price, and you are free to
+          decline at that point at no cost.
         </Section>
 
         <Section title="3. No online payment">
@@ -69,6 +79,10 @@ function TermsPage() {
           Questions about these terms: call{' '}
           <a href={SUPPORT_PHONE_TEL} className="font-semibold text-on-surface underline">
             {SUPPORT_PHONE_DISPLAY}
+          </a>{' '}
+          or email{' '}
+          <a href={SUPPORT_EMAIL_HREF} className="font-semibold text-on-surface underline">
+            {SUPPORT_EMAIL}
           </a>
           . See also our{' '}
           <Link to="/privacy" className="font-semibold text-on-surface underline">

@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { bookingSearchSchema } from '~/lib/booking-search'
-import { priceQuote } from '~/lib/mock-quote'
-import { TIME_SLOTS, buildMonth, formatLongDate } from '~/lib/mock-calendar'
-import { approxRoadMiles } from '~/lib/distance'
+import { TIME_SLOTS, formatLongDate } from '~/lib/calendar'
 import { Stepper } from '~/components/stepper'
-import { PriceCalendar } from '~/components/price-calendar'
+import { DateCalendar } from '~/components/date-calendar'
 import { TimeSlotGrid } from '~/components/time-slot-grid'
 import { BookingSummary } from '~/components/booking-summary'
 import { Icon } from '~/components/icon'
@@ -19,8 +17,6 @@ export const Route = createFileRoute('/date')({
   component: DatePage,
 })
 
-const FALLBACK_DISTANCE_MI = 12
-
 function todayIso() {
   const d = new Date()
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -29,21 +25,6 @@ function todayIso() {
 function DatePage() {
   const search = Route.useSearch()
   const navigate = useNavigate()
-
-  const distanceMi =
-    search.fromLat != null && search.fromLng != null && search.toLat != null && search.toLng != null
-      ? approxRoadMiles(
-          { lat: search.fromLat, lng: search.fromLng },
-          { lat: search.toLat, lng: search.toLng },
-        )
-      : FALLBACK_DISTANCE_MI
-
-  const baseQuote = priceQuote({
-    size: search.size ?? 'car',
-    condition: search.condition ?? 'drives',
-    distanceMiles: distanceMi,
-  })
-  const basePrice = baseQuote.total
 
   const [date, setDate] = useState(search.date ?? todayIso())
   const [slot, setSlot] = useState(search.slot ?? TIME_SLOTS[0])
@@ -55,11 +36,6 @@ function DatePage() {
       replace: true,
     })
   }, [date, slot])
-
-  const ref = new Date(date)
-  const month = buildMonth(ref, basePrice)
-  const selected = month.days.find((d) => d?.iso === date)
-  const finalTotal = selected?.price ?? basePrice
 
   return (
     <div className="container-app py-6 md:py-8">
@@ -75,7 +51,7 @@ function DatePage() {
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex flex-col gap-4">
           <div className="rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
-            <PriceCalendar basePrice={basePrice} value={date} onChange={setDate} />
+            <DateCalendar value={date} onChange={setDate} />
           </div>
 
           <div className="rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
@@ -96,12 +72,11 @@ function DatePage() {
             rows={[
               { label: 'Pick-up', value: formatLongDate(date) },
               { label: 'Window', value: slot },
-              { label: 'Route', value: `${search.from || 'NW1'} → ${search.to || 'OX2'}` },
+              { label: 'Route', value: `${search.from || 'Pick-up'} → ${search.to || 'TBC'}` },
             ]}
-            total={finalTotal}
             ctaLabel="Continue"
             ctaHref={{ to: '/details', search: { ...search, date, slot } }}
-            fine="Indicative price — no payment now. We confirm before dispatch."
+            fine="No payment now — drivers respond with quotes and we confirm with you."
           />
         </aside>
       </div>

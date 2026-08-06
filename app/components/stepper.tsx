@@ -4,7 +4,7 @@ interface StepperProps {
   step: 0 | 1 | 2
 }
 
-const LABELS = ['Quote', 'Time', 'Details'] as const
+const LABELS = ['Journey', 'Time', 'Details'] as const
 
 export function Stepper({ step }: StepperProps) {
   return (

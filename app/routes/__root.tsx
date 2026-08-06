@@ -1,7 +1,17 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
 import { Header } from '~/components/header'
 import { Footer } from '~/components/footer'
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, SUPPORT_PHONE_DISPLAY } from '~/lib/site'
+import {
+  COMPANY_NAME,
+  GOOGLE_REVIEWS_URL,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE_DISPLAY,
+  TOWMYCAR_URL,
+  TRUSTPILOT_URL,
+} from '~/lib/site'
 import appCss from '~/styles/app.css?url'
 
 const JSON_LD = JSON.stringify({
@@ -10,9 +20,18 @@ const JSON_LD = JSON.stringify({
   name: SITE_NAME,
   url: SITE_URL,
   telephone: SUPPORT_PHONE_DISPLAY.replace(/\s+/g, ''),
+  email: SUPPORT_EMAIL,
   description: SITE_DESCRIPTION,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '46 Throwley Way',
+    addressLocality: 'Sutton',
+    postalCode: 'SM1 4AF',
+    addressCountry: 'GB',
+  },
+  parentOrganization: { '@type': 'Organization', name: COMPANY_NAME },
+  sameAs: [TOWMYCAR_URL, TRUSTPILOT_URL, GOOGLE_REVIEWS_URL],
   areaServed: ['England', 'Scotland', 'Wales'],
-  priceRange: '££',
   openingHours: 'Mo-Su 00:00-24:00',
 })
 

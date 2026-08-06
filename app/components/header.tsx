@@ -3,11 +3,14 @@ import { Link, useLocation } from '@tanstack/react-router'
 import { Button } from './ui/button'
 import { Icon } from './icon'
 import { Logo } from './logo'
+import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 
 const NAV = [
   { label: 'Home', to: '/' },
   { label: 'Services', to: '/#services' },
   { label: 'How it works', to: '/#how' },
+  { label: 'Reviews', to: '/#reviews' },
+  { label: 'FAQ', to: '/#faq' },
 ] as const
 
 export function Header() {
@@ -38,13 +41,13 @@ export function Header() {
 
         <div className="ml-auto flex items-center gap-2.5">
           <a
-            href="tel:08081570111"
+            href={SUPPORT_PHONE_TEL}
             className="hidden items-center gap-2 rounded-full bg-surface-c px-3.5 py-2 text-[13px] font-semibold text-on-surface transition-colors hover:bg-surface-high sm:inline-flex"
           >
-            <Icon name="phone" size={14} /> 0808 157 0111
+            <Icon name="phone" size={14} /> {SUPPORT_PHONE_DISPLAY}
           </a>
           <Button asChild size="sm">
-            <Link to="/quote">Book a tow</Link>
+            <Link to="/quote">Get quotes</Link>
           </Button>
           <button
             type="button"
@@ -70,10 +73,10 @@ export function Header() {
             </a>
           ))}
           <a
-            href="tel:08081570111"
+            href={SUPPORT_PHONE_TEL}
             className="rounded-[var(--radius)] px-3.5 py-3 text-[15px] font-semibold transition-colors hover:bg-surface-c"
           >
-            Call 0808 157 0111
+            Call {SUPPORT_PHONE_DISPLAY}
           </a>
         </div>
       )}

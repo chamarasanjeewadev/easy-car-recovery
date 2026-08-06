@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { Button } from './ui/button'
 import { Icon } from './icon'
 import { HeroCard } from './hero-card'
+import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 
 export function Hero() {
   return (
@@ -22,8 +23,8 @@ export function Hero() {
             no matter <span className="text-primary">what.</span>
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-on-surface-variant">
-            Vehicle recovery across England, Scotland and Wales. Get an instant indicative quote from a
-            nationwide network of vetted recovery drivers — no membership, no upfront payment.
+            Check your reg, tell us your route, and vetted recovery drivers across England, Scotland
+            and Wales quote your job — no membership, no upfront payment.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">
@@ -32,14 +33,14 @@ export function Hero() {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <a href="tel:08081570111">
-                <Icon name="phone" size={16} /> Call us
+              <a href={SUPPORT_PHONE_TEL}>
+                <Icon name="phone" size={16} /> {SUPPORT_PHONE_DISPLAY}
               </a>
             </Button>
           </div>
 
           <div className="mt-9 flex flex-wrap gap-8 border-t border-surface-high pt-6">
-            <Trust k="Nationwide" v="England · Scotland · Wales" />
+            <Trust k="100+" v="Vetted recovery drivers" />
             <Trust k="24/7" v="Requests handled any time" />
             <Trust k="£0 upfront" v="Pay nothing to book online" />
           </div>
