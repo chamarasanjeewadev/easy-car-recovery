@@ -3,11 +3,11 @@ import { Icon } from './icon'
 export const FAQ_ITEMS = [
   {
     q: 'How much does vehicle recovery cost?',
-    a: 'There is no fixed price list. When you submit a request, vetted recovery drivers near you respond with real quotes for your exact job, and our team confirms the price with you before anything is dispatched. You are free to decline at no cost.',
+    a: 'Your price is calculated from your route (pick-up to drop-off distance) and your vehicle, using the same pricing the TowMyCar network runs on. You see the exact fixed price at checkout before you pay — no surprises on the day.',
   },
   {
     q: 'Do I pay anything online?',
-    a: 'No. Nothing is charged on this website. You agree the price during the confirmation call and pay the driver directly once the job is done.',
+    a: 'Yes — you pay the full fixed price securely by card when you book, processed by Stripe. Your booking is only confirmed once payment succeeds, and you get a full refund if we cannot fulfil your recovery.',
   },
   {
     q: 'How fast can someone reach me?',
@@ -19,7 +19,7 @@ export const FAQ_ITEMS = [
   },
   {
     q: 'What does the free vehicle check show?',
-    a: "Official DVLA data for your reg: make, colour, fuel type, year, plus current MOT and tax status. It's free and helps drivers quote accurately.",
+    a: "Official DVLA data for your reg: make, colour, fuel type, year, plus current MOT and tax status. It's free and helps us price your recovery accurately.",
   },
   {
     q: 'Is my breakdown an emergency?',

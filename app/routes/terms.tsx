@@ -28,7 +28,7 @@ function TermsPage() {
   return (
     <div className="container-app max-w-[760px] py-16">
       <h1 className="text-[clamp(32px,4vw,44px)] font-bold tracking-[-0.02em]">Terms of Service</h1>
-      <p className="mt-2 text-sm text-on-surface-variant">Version ecr-v2 · Last updated 6 August 2026</p>
+      <p className="mt-2 text-sm text-on-surface-variant">Version ecr-v3 · Last updated 6 August 2026</p>
 
       <div className="prose-ecr mt-8 space-y-6 text-[15px] leading-relaxed text-on-surface-variant">
         <Section title="1. Who we are">
@@ -39,15 +39,18 @@ function TermsPage() {
         </Section>
 
         <Section title="2. How pricing works">
-          We do not display prices on this website. When you submit a request, independent recovery
-          drivers respond with quotes for your job, and our team contacts you to confirm availability
-          and the price. No driver is dispatched until you have agreed the price, and you are free to
-          decline at that point at no cost.
+          The price shown at checkout is calculated from the details you provide — your route
+          (pick-up to drop-off distance), your vehicle, and the job type. It is a fixed price for
+          the recovery described in your booking. If the details you gave were inaccurate (for
+          example, a vehicle that does not roll when you told us it drives), the operator may need
+          to re-quote before dispatch; you can accept the revised price or take a full refund.
         </Section>
 
-        <Section title="3. No online payment">
-          We do not take payment on this website. No money is charged when you submit a request. Payment
-          terms are agreed when your booking is confirmed.
+        <Section title="3. Payment">
+          You pay the full booking price online at the time of booking. Payments are processed
+          securely by Stripe — your card details never touch our servers and we do not store them.
+          Your booking is only created once your payment succeeds, and a receipt is emailed to you.
+          If we cannot fulfil your recovery, you receive a full refund.
         </Section>
 
         <Section title="4. Your responsibilities">
@@ -57,10 +60,12 @@ function TermsPage() {
           complete.
         </Section>
 
-        <Section title="5. Cancellations">
-          You can cancel a request free of charge any time before the booking is confirmed with you by
-          phone. For cancellations after confirmation, any charge will be as agreed during the confirmation
-          call.
+        <Section title="5. Cancellations and refunds">
+          You can cancel free of charge — with a full refund to your original payment method — any
+          time before a driver has been dispatched to your pick-up location. If you cancel after
+          dispatch, we may deduct reasonable costs already incurred and refund the balance. If no
+          driver can be found for your job, we cancel the booking and refund you in full. Refunds
+          are issued via Stripe and typically arrive within 5–10 working days.
         </Section>
 
         <Section title="6. Service limits">

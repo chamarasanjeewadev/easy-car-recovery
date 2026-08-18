@@ -8,6 +8,7 @@ import { TimeSlotGrid } from '~/components/time-slot-grid'
 import { BookingSummary } from '~/components/booking-summary'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
+import { useQuote } from '~/lib/use-quote'
 
 export const Route = createFileRoute('/date')({
   validateSearch: bookingSearchSchema,
@@ -28,6 +29,7 @@ function DatePage() {
 
   const [date, setDate] = useState(search.date ?? todayIso())
   const [slot, setSlot] = useState(search.slot ?? TIME_SLOTS[0])
+  const { amountPence, loading: priceLoading } = useQuote(search)
 
   useEffect(() => {
     navigate({
@@ -74,9 +76,11 @@ function DatePage() {
               { label: 'Window', value: slot },
               { label: 'Route', value: `${search.from || 'Pick-up'} → ${search.to || 'TBC'}` },
             ]}
+            pricePence={amountPence}
+            priceLoading={priceLoading}
             ctaLabel="Continue"
             ctaHref={{ to: '/details', search: { ...search, date, slot } }}
-            fine="No payment now — drivers respond with quotes and we confirm with you."
+            fine="Next: your details, then secure online payment at a fixed price."
           />
         </aside>
       </div>

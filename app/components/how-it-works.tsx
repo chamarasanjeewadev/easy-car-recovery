@@ -7,15 +7,15 @@ const STEPS = [
   },
   {
     n: 2,
-    title: 'Drivers quote your job',
+    title: 'Pay a fixed price online',
     body:
-      'Vetted recovery drivers near you respond with real quotes. Our team calls you with the best options — typically within 15 minutes.',
+      'Your price is calculated from your route and vehicle, and you pay securely by card at checkout. No haggling, no call-out surprises.',
   },
   {
     n: 3,
-    title: 'Confirm & recover',
+    title: 'We dispatch & recover',
     body:
-      'Agree the price before anything is dispatched, then pay the driver directly. Nothing is charged online.',
+      'Vetted recovery drivers near you are notified the moment you book — the network averages a 15-minute response, 24/7.',
   },
 ]
 

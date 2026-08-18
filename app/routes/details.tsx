@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
-import { bookingSearchSchema } from '~/lib/booking-search'
+import {
+  bookingSearchSchema,
+  serviceNeedsDropoff,
+  type Passengers,
+} from '~/lib/booking-search'
 import { formatLongDate } from '~/lib/calendar'
 import { approxRoadMiles } from '~/lib/distance'
 import { lookupVehicleFn, titleCase, type VehicleResult } from '~/lib/api/lookup-vehicle'
-import { submitRecoveryRequestFn, type SubmitRequestResult } from '~/lib/api/submit-request'
+import { uploadPhotos } from '~/lib/api/photos'
 import { normalizeUkMobile } from '~/lib/phone'
-import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 import { Stepper } from '~/components/stepper'
 import { BookingSummary } from '~/components/booking-summary'
+import { SegmentControl } from '~/components/segment-control'
+import { PhotoUpload } from '~/components/photo-upload'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { useQuote } from '~/lib/use-quote'
 
 export const Route = createFileRoute('/details')({
   validateSearch: bookingSearchSchema,
@@ -37,9 +43,22 @@ type FieldErrors = Partial<Record<'firstName' | 'lastName' | 'email' | 'mobile' 
 function DetailsPage() {
   const search = Route.useSearch()
   const navigate = useNavigate()
+  const { amountPence, loading: priceLoading } = useQuote(search)
 
+  const needsDropoff = serviceNeedsDropoff(search.requestType)
+  const hasVehicle = !!search.reg || !!search.manualVehicle
+
+  // Drop-off is required for relocation services: the charged price is computed
+  // from the pick-up -> drop-off distance, so it must never fall back to a guess.
+  // On-site services (jump-start / fuel / scrap) price against the pick-up only.
   const ready =
-    !!search.reg && !!search.from && search.fromLat != null && search.fromLng != null && !!search.date && !!search.slot
+    hasVehicle &&
+    !!search.from &&
+    search.fromLat != null &&
+    search.fromLng != null &&
+    (needsDropoff ? !!search.to && search.toLat != null && search.toLng != null : true) &&
+    !!search.date &&
+    !!search.slot
 
   const [vehicle, setVehicle] = useState<VehicleResult | null>(null)
   const [firstName, setFirstName] = useState('')
@@ -47,11 +66,12 @@ function DetailsPage() {
   const [email, setEmail] = useState('')
   const [mobile, setMobile] = useState('')
   const [notes, setNotes] = useState('')
+  const [passengers, setPassengers] = useState<Passengers>(search.passengers ?? '0')
+  const [photoFiles, setPhotoFiles] = useState<File[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [uploadErr, setUploadErr] = useState<string | null>(null)
   const [terms, setTerms] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
-  const [busy, setBusy] = useState(false)
-  const [failure, setFailure] = useState<Exclude<SubmitRequestResult, { ok: true }> | null>(null)
-  const busyRef = useRef(false)
 
   useEffect(() => {
     if (!search.reg) return
@@ -85,17 +105,14 @@ function DetailsPage() {
   }
 
   const distanceMi =
-    search.toLat != null && search.toLng != null
+    needsDropoff && search.toLat != null && search.toLng != null
       ? approxRoadMiles(
           { lat: search.fromLat!, lng: search.fromLng! },
           { lat: search.toLat, lng: search.toLng },
         )
-      : undefined
+      : 0
 
   const submit = async () => {
-    if (busyRef.current) return
-    setFailure(null)
-
     const parsed = contactSchema.safeParse({ firstName, lastName, email, mobile })
     const nextErrors: FieldErrors = {}
     if (!parsed.success) {
@@ -108,58 +125,40 @@ function DetailsPage() {
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0 || !parsed.success) return
 
-    busyRef.current = true
-    setBusy(true)
-    try {
-      const result = await submitRecoveryRequestFn({
-        data: {
-          reg: search.reg!,
-          from: search.from!,
-          fromLat: search.fromLat!,
-          fromLng: search.fromLng!,
-          to: search.to,
-          toLat: search.toLat,
-          toLng: search.toLng,
-          fromPostcode: search.fromPostcode,
-          toPostcode: search.toPostcode,
-          size: search.size ?? 'car',
-          condition: search.condition ?? 'drives',
-          date: search.date!,
-          slot: search.slot!,
-          firstName: parsed.data.firstName,
-          lastName: parsed.data.lastName,
-          email: parsed.data.email,
-          mobile: parsed.data.mobile,
-          notes: notes.trim() || undefined,
-          distanceMiles: distanceMi,
-          termsAcceptedAt: new Date().toISOString(),
-        },
-      })
-      if (result.ok) {
-        navigate({
-          to: '/success',
-          search: {
-            requestId: result.requestId,
-            reg: search.reg,
-            date: search.date,
-            slot: search.slot,
-            from: search.from,
-            to: search.to,
-          },
-        })
+    // Upload any photos now (final set only) and carry just the link token to
+    // /pay — it goes into the PaymentIntent metadata and links the photos to the
+    // booking on the backend after payment succeeds.
+    let uploadToken: string | undefined
+    if (photoFiles.length > 0) {
+      setUploading(true)
+      setUploadErr(null)
+      try {
+        const result = await uploadPhotos(photoFiles)
+        uploadToken = result?.uploadToken
+      } catch (e) {
+        setUploadErr(e instanceof Error ? e.message : 'Photo upload failed. Please try again.')
+        setUploading(false)
         return
       }
-      setFailure(result)
-    } catch {
-      setFailure({
-        ok: false,
-        code: 'UNAVAILABLE',
-        message: 'Something went wrong submitting your request. Please try again, or call us.',
-      })
-    } finally {
-      busyRef.current = false
-      setBusy(false)
+      setUploading(false)
     }
+
+    // No booking is created here — /pay charges first, and the booking is
+    // submitted only after Stripe confirms the payment.
+    navigate({
+      to: '/pay',
+      search: {
+        ...search,
+        firstName: parsed.data.firstName,
+        lastName: parsed.data.lastName,
+        email: parsed.data.email,
+        mobile: parsed.data.mobile,
+        notes: notes.trim() || undefined,
+        passengers,
+        uploadToken,
+        termsAcceptedAt: new Date().toISOString(),
+      },
+    })
   }
 
   return (
@@ -263,6 +262,31 @@ function DetailsPage() {
             />
           </div>
 
+          <div className="rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-semibold uppercase tracking-[0.08em] text-on-surface-variant">Passengers</span>
+              <span className="text-[13px] text-on-surface-variant">Anyone travelling with the vehicle?</span>
+            </div>
+            <SegmentControl
+              value={passengers}
+              onChange={setPassengers}
+              options={[
+                { value: '0', label: 'None' },
+                { value: '1', label: '1' },
+                { value: '2', label: '2' },
+                { value: '3+', label: '3+' },
+              ]}
+            />
+          </div>
+
+          <div className="rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
+            <div className="mb-4 text-xs font-semibold uppercase tracking-[0.08em] text-on-surface-variant">
+              Photos <span className="normal-case font-normal">· optional</span>
+            </div>
+            <PhotoUpload files={photoFiles} onChange={setPhotoFiles} disabled={uploading} />
+            {uploadErr && <p className="mt-2 text-xs font-medium text-[#b00020]">{uploadErr}</p>}
+          </div>
+
           <label className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-md)] bg-white p-5 shadow-[var(--shadow-card)]">
             <input
               type="checkbox"
@@ -284,21 +308,6 @@ function DetailsPage() {
             </span>
           </label>
 
-          {failure && (
-            <div className="rounded-[var(--radius-md)] border border-[#e8c1c5] bg-[#fdf3f4] p-5">
-              <div className="font-bold text-[#b00020]">
-                {failure.code === 'DUPLICATE' ? 'This vehicle already has an open request' : 'We could not submit your request'}
-              </div>
-              <p className="mt-1.5 text-sm text-on-surface-variant">{failure.message}</p>
-              <p className="mt-2 text-sm font-semibold">
-                Need a hand? Call us on{' '}
-                <a href={SUPPORT_PHONE_TEL} className="underline">
-                  {SUPPORT_PHONE_DISPLAY}
-                </a>
-                .
-              </p>
-            </div>
-          )}
         </div>
 
         <aside className="lg:sticky lg:top-24">
@@ -306,14 +315,19 @@ function DetailsPage() {
             rows={[
               { label: 'Pick-up', value: formatLongDate(search.date!) },
               { label: 'Window', value: search.slot! },
-              { label: 'Route', value: `${search.from} → ${search.to ?? 'TBC'}` },
-              ...(distanceMi != null ? [{ label: 'Distance', value: `${distanceMi} mi` }] : []),
+              {
+                label: needsDropoff ? 'Route' : 'Location',
+                value: needsDropoff ? `${search.from} → ${search.to}` : `${search.from}`,
+              },
+              ...(needsDropoff ? [{ label: 'Distance', value: `${distanceMi} mi` }] : []),
             ]}
-            ctaLabel="Request recovery"
+            pricePence={amountPence}
+            priceLoading={priceLoading}
+            ctaLabel="Continue to payment"
             onCta={submit}
-            disabled={busy}
-            busyLabel="Sending your request…"
-            fine="No payment now — drivers respond with quotes and our team confirms with you."
+            disabled={uploading}
+            busyLabel="Uploading photos…"
+            fine="Next: secure card payment. Your booking is only confirmed once payment succeeds."
           />
         </aside>
       </div>

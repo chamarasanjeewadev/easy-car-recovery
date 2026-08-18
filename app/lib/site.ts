@@ -12,4 +12,4 @@ export const TOWMYCAR_URL = 'https://towmycar.uk'
 export const GOOGLE_REVIEWS_URL = 'https://g.page/r/Ce-U88IHybAbEBM'
 export const TRUSTPILOT_URL = 'https://uk.trustpilot.com/review/towmycar.uk'
 export const SITE_DESCRIPTION =
-  'UK vehicle recovery, booked online in minutes. Submit your request and get quotes from a nationwide network of 100+ vetted recovery drivers. No upfront payment.'
+  'UK vehicle recovery, booked and paid online in minutes. A fixed price for your route and vehicle, fulfilled by a nationwide network of 100+ vetted recovery drivers.'

@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import { Button } from './ui/button'
 import { Icon } from './icon'
+import { formatPounds } from '~/lib/money'
 
 interface SummaryRow {
   label: string
@@ -10,15 +11,20 @@ interface SummaryRow {
 
 interface BookingSummaryProps {
   rows: SummaryRow[]
+  /** Fixed recovery price in pence. null = not yet known (needs both locations). */
+  pricePence?: number | null
+  /** True while the quote is being fetched. */
+  priceLoading?: boolean
   fine?: ReactNode
   ctaLabel: string
   onCta?: () => void
-  ctaHref?: { to: '/quote' | '/date' | '/details' | '/success'; search?: Record<string, unknown> }
+  ctaHref?: { to: '/quote' | '/date' | '/details' | '/pay' | '/success'; search?: Record<string, unknown> }
   disabled?: boolean
   busyLabel?: string
 }
 
-export function BookingSummary({ rows, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
+export function BookingSummary({ rows, pricePence, priceLoading, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
+  const showPrice = pricePence != null || priceLoading
   const cta = (
     <Button
       size="lg"
@@ -46,8 +52,16 @@ export function BookingSummary({ rows, fine, ctaLabel, onCta, ctaHref, disabled,
             </div>
           ))}
         </div>
+        {showPrice && (
+          <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
+            <span className="text-sm text-on-surface-variant">Fixed price</span>
+            <strong className="text-[26px] font-bold tracking-[-0.02em]">
+              {pricePence != null ? formatPounds(pricePence) : 'Calculating…'}
+            </strong>
+          </div>
+        )}
         <div className="mt-3 border-t border-surface-high pt-4 text-sm text-on-surface-variant">
-          Vetted recovery drivers quote your job — we confirm the price with you before dispatch.
+          Fixed price, paid securely online — a vetted recovery driver is assigned to your booking.
         </div>
       </div>
 

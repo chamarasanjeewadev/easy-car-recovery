@@ -23,8 +23,8 @@ export function Hero() {
             no matter <span className="text-primary">what.</span>
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-on-surface-variant">
-            Check your reg, tell us your route, and vetted recovery drivers across England, Scotland
-            and Wales quote your job — no membership, no upfront payment.
+            Check your reg, tell us your route, and book a vetted recovery driver across England,
+            Scotland and Wales — a fixed price online, no membership, no call-out surprises.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button asChild size="lg">

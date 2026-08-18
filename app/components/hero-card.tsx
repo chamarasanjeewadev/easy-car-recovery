@@ -126,10 +126,10 @@ export function HeroCard() {
       </div>
 
       <Button size="lg" className="mt-5 w-full" onClick={submit}>
-        Get recovery quotes <Icon name="arrow-right" size={16} />
+        Book my recovery <Icon name="arrow-right" size={16} />
       </Button>
       <p className="mt-3 text-center text-xs text-on-surface-variant">
-        Free DVLA check · No payment online · Drivers quote your job
+        Free DVLA check · Fixed price at checkout · Secure card payment
       </p>
     </div>
   )

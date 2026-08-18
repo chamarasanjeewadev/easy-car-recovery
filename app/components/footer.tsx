@@ -21,14 +21,14 @@ export function Footer() {
           <div className="col-span-2 max-w-[320px] md:col-span-1">
             <Logo light />
             <p className="mt-4 text-sm leading-relaxed opacity-70">
-              Pay-as-you-go vehicle recovery across England, Scotland and Wales — no yearly
-              subscription, no upfront payment.
+              Pay-as-you-go vehicle recovery across England, Scotland and Wales — a fixed price
+              online, no yearly subscription.
             </p>
           </div>
           <div>
             <div className="mb-4 text-[13px] font-bold uppercase tracking-wider opacity-85">Book</div>
             <Link to="/quote" className="block py-1 text-sm opacity-70 transition-opacity hover:opacity-100">
-              Get recovery quotes
+              Book a recovery
             </Link>
             <a
               href={SUPPORT_PHONE_TEL}

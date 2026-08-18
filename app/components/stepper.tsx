@@ -1,10 +1,10 @@
 import { Icon } from './icon'
 
 interface StepperProps {
-  step: 0 | 1 | 2
+  step: 0 | 1 | 2 | 3
 }
 
-const LABELS = ['Journey', 'Time', 'Details'] as const
+const LABELS = ['Journey', 'Time', 'Details', 'Pay'] as const
 
 export function Stepper({ step }: StepperProps) {
   return (
@@ -29,7 +29,7 @@ export function Stepper({ step }: StepperProps) {
         </div>
       ))}
       <span className="ml-3 hidden text-sm font-semibold sm:inline">
-        Step {step + 1} of 3 · {LABELS[step]}
+        Step {step + 1} of {LABELS.length} · {LABELS[step]}
       </span>
     </div>
   )

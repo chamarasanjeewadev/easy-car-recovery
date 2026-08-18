@@ -15,13 +15,13 @@ export function CtaBanner() {
           <h2 className="mt-3.5 text-[clamp(36px,5vw,60px)] font-bold leading-[1.05] tracking-[-0.025em]">
             Broken down?
             <br />
-            Get quotes
+            Booked & paid
             <br />
             in minutes.
           </h2>
           <p className="mt-4 max-w-[44ch] text-[17px] opacity-80">
-            No memberships, no annual fees. Submit your request and vetted recovery drivers quote
-            your job — only when you actually need it.
+            No memberships, no annual fees. Book at a fixed price and a vetted recovery driver is
+            on the way — pay only when you actually need it.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild variant="dark" size="lg" className="bg-on-surface hover:bg-inverse-surface text-white">
@@ -40,8 +40,8 @@ export function CtaBanner() {
         <div className="rounded-[var(--radius-md)] bg-black/[0.08] p-6 backdrop-blur-md">
           <Row label="Coverage" value="England · Scotland · Wales" />
           <Row label="Operating" value="24 / 7 / 365" />
-          <Row label="Upfront payment" value="None" />
-          <Row label="Pricing" value="Quoted by recovery drivers" />
+          <Row label="Pricing" value="Fixed price at checkout" />
+          <Row label="Payment" value="Secure online · refundable" />
         </div>
       </div>
     </section>

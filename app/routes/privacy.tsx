@@ -43,9 +43,17 @@ function PrivacyPage() {
         </Section>
 
         <Section title="How we use it">
-          We use these details to create and manage your recovery booking on the TowMyCar platform, to
-          match you with recovery drivers near you who quote your job, and to contact you about your
-          booking. We record when you accepted our terms as evidence of consent.
+          We use these details to price your booking, to create and manage your recovery booking on
+          the TowMyCar platform, to match you with recovery drivers near you, and to contact you
+          about your booking. We record when you accepted our terms as evidence of consent.
+        </Section>
+
+        <Section title="Payments">
+          Online payments are processed by Stripe. Your card details are entered directly into
+          Stripe's secure payment form and never touch our servers — we do not store them. We share
+          with Stripe the information needed to process the payment (amount, email for your receipt,
+          and booking details attached to the payment reference). Stripe processes your data under
+          its own privacy policy (stripe.com/privacy).
         </Section>
 
         <Section title="Who we share it with">

@@ -91,7 +91,7 @@ function ServiceCard({ service: s }: { service: Service }) {
       <h3 className="text-[22px] font-bold tracking-tight">{s.name}</h3>
       <p className={`flex-1 text-[15px] leading-relaxed ${descCls}`}>{s.desc}</p>
       <div className="flex items-center justify-between">
-        <div className="text-[13px] font-semibold opacity-70">Get quotes</div>
+        <div className="text-[13px] font-semibold opacity-70">Book online</div>
         <span
           className={`grid h-9 w-9 place-items-center rounded-full transition ${arrowBg} ${
             isFeature || isDark ? 'group-hover:-rotate-45' : ''

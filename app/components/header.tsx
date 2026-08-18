@@ -47,7 +47,7 @@ export function Header() {
             <Icon name="phone" size={14} /> {SUPPORT_PHONE_DISPLAY}
           </a>
           <Button asChild size="sm">
-            <Link to="/quote">Get quotes</Link>
+            <Link to="/quote">Book recovery</Link>
           </Button>
           <button
             type="button"

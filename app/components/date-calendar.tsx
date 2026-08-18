@@ -72,7 +72,7 @@ export function DateCalendar({ value, onChange }: DateCalendarProps) {
           <span className="h-2.5 w-2.5 rounded-sm bg-inverse-surface" />
           Selected
         </span>
-        <span>Recovery drivers quote your job — no prices are set online</span>
+        <span>Same fixed price every day — your total is shown at checkout</span>
       </div>
     </div>
   )
