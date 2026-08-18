@@ -65,6 +65,9 @@ export function bookingToMetadata(
   if (data.vehicleClass?.trim()) meta.vehicleClass = data.vehicleClass.trim().slice(0, 50)
   if (data.manualVehicle) meta.manualVehicle = '1'
   if (data.uploadToken) meta.uploadToken = data.uploadToken.slice(0, 200)
+  // Phone-verification proof (bound to `mobile`). Stripe caps metadata at 500
+  // chars/key; a phone-verified JWT fits comfortably.
+  if (data.verifiedToken) meta.verifiedToken = data.verifiedToken.slice(0, 500)
   return meta
 }
 
@@ -88,6 +91,7 @@ function metadataToBooking(meta: Record<string, string>): SubmitRequestInput {
     vehicleClass: meta.vehicleClass || undefined,
     manualVehicle: meta.manualVehicle === '1' || undefined,
     uploadToken: meta.uploadToken || undefined,
+    verifiedToken: meta.verifiedToken || undefined,
     date: meta.date,
     slot: meta.slot,
     firstName: meta.firstName,

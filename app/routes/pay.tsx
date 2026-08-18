@@ -6,6 +6,12 @@ import { paySearchSchema, serviceNeedsDropoff } from '~/lib/booking-search'
 import { formatLongDate } from '~/lib/calendar'
 import { createPaymentIntentFn } from '~/lib/api/payment'
 import { formatPounds } from '~/lib/money'
+import { normalizeUkMobile } from '~/lib/phone'
+import {
+  isPhoneVerified,
+  phoneVerificationEnabled,
+  verifiedTokenForPhone,
+} from '~/lib/otp-verification'
 import { Stepper } from '~/components/stepper'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
@@ -45,10 +51,22 @@ function PayPage() {
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [amountPence, setAmountPence] = useState<number | null>(null)
   const [setupErr, setSetupErr] = useState<string | null>(null)
+  const [verifyBlocked, setVerifyBlocked] = useState(false)
 
   const created = useRef(false)
   useEffect(() => {
     if (!journeyReady || !contactReady || created.current) return
+
+    // Defence in depth: don't create a PaymentIntent unless this exact number
+    // carries a fresh verification proof (client gate against URL-skipping). The
+    // genuine, phone-bound verifiedToken travels to the server for the booking.
+    const mobileE164 = normalizeUkMobile(search.mobile ?? '')
+    if (phoneVerificationEnabled() && !isPhoneVerified(mobileE164)) {
+      setVerifyBlocked(true)
+      return
+    }
+    const verifiedToken = verifiedTokenForPhone(mobileE164) || undefined
+
     created.current = true
     // The server recomputes the price from these inputs (distance, vehicle
     // weight, live pricing config) — the client never supplies the amount.
@@ -79,6 +97,7 @@ function PayPage() {
         email: search.email!,
         mobile: search.mobile!,
         notes: search.notes,
+        verifiedToken,
         termsAcceptedAt: search.termsAcceptedAt!,
       },
     })
@@ -139,6 +158,23 @@ function PayPage() {
         <Button asChild size="lg" className="mt-6">
           <Link to={journeyReady ? '/details' : '/quote'} search={search}>
             {journeyReady ? 'Back to your details' : 'Back to your journey'}
+          </Link>
+        </Button>
+      </div>
+    )
+  }
+
+  if (verifyBlocked) {
+    return (
+      <div className="container-app max-w-[560px] py-20 text-center">
+        <h1 className="text-2xl font-bold">Verify your mobile number first</h1>
+        <p className="mt-3 text-on-surface-variant">
+          For your security we confirm your number by WhatsApp (or SMS) before taking payment, so your
+          driver can reach you.
+        </p>
+        <Button asChild size="lg" className="mt-6">
+          <Link to="/details" search={search}>
+            Back to verify
           </Link>
         </Button>
       </div>

@@ -6,6 +6,8 @@ interface ImportMetaEnv {
   readonly VITE_TOWMYCAR_API_BASE_URL: string
   /** Stripe publishable key (pk_test_/pk_live_) for the Easy Car Recovery Stripe account. */
   readonly VITE_STRIPE_PUBLISHABLE_KEY: string
+  /** Phone/WhatsApp verification kill switch. Anything but 'false' = enabled. */
+  readonly VITE_ENABLE_PHONE_VERIFICATION: string
 }
 
 interface ImportMeta {

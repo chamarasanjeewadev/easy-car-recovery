@@ -33,6 +33,8 @@ export const bookingInputSchema = z
     vehicleClass: z.string().max(50).optional(),
     manualVehicle: z.boolean().optional(),
     uploadToken: z.string().max(200).optional(),
+    // Signed phone-ownership proof from the OTP verify step, bound to `mobile`.
+    verifiedToken: z.string().max(600).optional(),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     slot: z.string().min(1),
     firstName: z.string().min(1).max(100),
@@ -191,6 +193,10 @@ export async function postBookingToTowMyCar(
     numberOfPassengers: data.passengers,
     // Backend links the pre-uploaded S3 photos to the request by this token.
     uploadToken: data.uploadToken,
+    // Signed proof the mobile was verified by WhatsApp/SMS OTP. The backend
+    // ignores it today (unknown key) but can enforce it later without an ECR
+    // change — the token is bound to `mobileNumber`.
+    verifiedToken: data.verifiedToken,
     deliveryDistance: data.distanceMiles != null ? String(data.distanceMiles) : undefined,
     termsAcceptedAt: data.termsAcceptedAt,
     termsVersion: TERMS_VERSION,

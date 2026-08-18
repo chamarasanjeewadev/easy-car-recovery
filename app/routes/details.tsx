@@ -15,11 +15,14 @@ import { Stepper } from '~/components/stepper'
 import { BookingSummary } from '~/components/booking-summary'
 import { SegmentControl } from '~/components/segment-control'
 import { PhotoUpload } from '~/components/photo-upload'
+import { OtpVerify } from '~/components/otp-verify'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { useQuote } from '~/lib/use-quote'
+import { useOtp } from '~/lib/use-otp'
+import { phoneVerificationEnabled } from '~/lib/otp-verification'
 
 export const Route = createFileRoute('/details')({
   validateSearch: bookingSearchSchema,
@@ -73,6 +76,10 @@ function DetailsPage() {
   const [terms, setTerms] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
 
+  const otp = useOtp()
+  const verifyEnabled = phoneVerificationEnabled()
+  const mobileE164 = normalizeUkMobile(mobile)
+
   useEffect(() => {
     if (!search.reg) return
     let cancelled = false
@@ -122,6 +129,12 @@ function DetailsPage() {
       }
     }
     if (!terms) nextErrors.terms = 'Please accept the terms to continue'
+    // Require a verified number for the exact mobile being submitted. This is a
+    // client gate (UX/friction); the unforgeable, phone-bound verifiedToken is
+    // what enables real server-side enforcement.
+    if (verifyEnabled && parsed.success && !otp.isVerifiedForPhone(normalizeUkMobile(parsed.data.mobile))) {
+      nextErrors.mobile = 'Please verify your mobile number to continue.'
+    }
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0 || !parsed.success) return
 
@@ -243,6 +256,7 @@ function DetailsPage() {
                 {errors.email && <FieldError message={errors.email} />}
               </div>
             </div>
+            {verifyEnabled && <OtpVerify otp={otp} e164={mobileE164} disabled={uploading} />}
             <p className="mt-4 text-[13px] text-on-surface-variant">
               Recovery drivers and our team use these details to confirm your booking and arrange pick-up.
             </p>
