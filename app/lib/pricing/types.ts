@@ -59,6 +59,16 @@ export type PricingConfig = {
   // disables the gate (quotes always flow straight through). e.g. 1.5 = hold
   // anything more than 50% above the recommended price.
   quoteApprovalMultiplier?: number;
+  // Request types priced with a flat guideline band instead of the computed
+  // distance×weight×commission band, AND exempted from the approval gate so the
+  // driver can price freely. For hard-to-estimate jobs (fuel, jump start, other)
+  // where a computed band is misleading. Absent/empty = feature off (every type
+  // keeps its computed band and the normal gate). Matched against the request
+  // type string; unknown/unlisted types are unaffected.
+  freePricingTypes?: string[];
+  // The flat `{ min, recommended, max }` shown as guidance for freePricingTypes.
+  // Only applied when a type is in freePricingTypes AND this is set.
+  freePricingBand?: PriceRange;
   extras?: PriceExtra[];
 };
 

@@ -22,6 +22,18 @@ export function resolveRequestMultiplier(
   return typeof m === "number" && m > 0 ? m : 1.0;
 }
 
+// Whether a request type is "free-priced": shown a flat guideline band instead
+// of the computed one and exempted from the approval gate. Off when the config
+// lists no free-priced types.
+export function isFreePriced(
+  config: PricingConfig,
+  requestType: string | null | undefined,
+): boolean {
+  const types = config.freePricingTypes;
+  if (!types || !types.length) return false;
+  return types.includes(String(requestType));
+}
+
 export function resolveWeightMultiplier(
   config: PricingConfig,
   weightKg: number,
@@ -80,6 +92,17 @@ export function calculatePriceRange(
   input: PriceInput,
   config: PricingConfig,
 ): PriceRange {
+  // Free-priced types (e.g. fuel, jump start, other) get a flat guideline band
+  // independent of distance/weight/commission — the computed band is misleading
+  // for these unpredictable jobs. Rounded for consistency with the computed path.
+  if (isFreePriced(config, input.requestType) && config.freePricingBand) {
+    const b = config.freePricingBand;
+    return {
+      min: Math.round(b.min),
+      recommended: Math.round(b.recommended),
+      max: Math.round(b.max),
+    };
+  }
   const requestMul = resolveRequestMultiplier(config, String(input.requestType));
   const { multiplier: weightMul } = resolveWeightMultiplier(
     config,
@@ -140,7 +163,11 @@ export function quoteRequiresApproval(
   quote: number,
   range: Pick<PriceRange, "recommended" | "max"> | null | undefined,
   config: PricingConfig,
+  requestType?: string | null,
 ): boolean {
+  // Free-priced types are never held — the driver prices these freely, the
+  // flat band is guidance only.
+  if (isFreePriced(config, requestType)) return false;
   if (!range) return false;
   const q = Number(quote);
   if (Number.isFinite(range.max) && q > range.max) return true;
@@ -252,4 +279,9 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   commissionRate: 0.15,
   // Hold quotes more than 50% above the recommended price for admin approval.
   quoteApprovalMultiplier: 1.5,
+  // Fuel, jump start and "other" are unpredictable to price by distance/weight,
+  // so drivers price them freely against a flat £50/£80/£100 guideline and are
+  // never held for approval.
+  freePricingTypes: ["FUEL", "JUMPSTART", "OTHER"],
+  freePricingBand: { min: 50, recommended: 80, max: 100 },
 };
