@@ -1,7 +1,7 @@
 // Single source of truth for site identity. Update SITE_URL before pointing
 // the production domain at this app — canonicals, sitemap and JSON-LD use it.
 export const SITE_NAME = 'Easy Car Recovery'
-export const SITE_URL = 'https://easycarrecovery.co.uk'
+export const SITE_URL = 'https://easycarrecovery.uk'
 export const SUPPORT_PHONE_DISPLAY = '+44 7535 806237'
 export const SUPPORT_PHONE_TEL = 'tel:+447535806237'
 export const SUPPORT_EMAIL = 'support@towmycar.uk'

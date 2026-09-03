@@ -19,8 +19,20 @@ const FAQ_JSON_LD = JSON.stringify({
   })),
 })
 
+const HOME_TITLE = 'Car Recovery Booked Online — Fixed Price, UK-Wide | Easy Car Recovery'
+const HOME_DESCRIPTION =
+  'Book car recovery online at a fixed price. Check your reg, tell us your route, and a vetted driver is dispatched across England, Scotland & Wales — no membership, no call-out surprises.'
+
 export const Route = createFileRoute('/')({
   head: () => ({
+    meta: [
+      { title: HOME_TITLE },
+      { name: 'description', content: HOME_DESCRIPTION },
+      { property: 'og:title', content: HOME_TITLE },
+      { property: 'og:description', content: HOME_DESCRIPTION },
+      { name: 'twitter:title', content: HOME_TITLE },
+      { name: 'twitter:description', content: HOME_DESCRIPTION },
+    ],
     links: [{ rel: 'canonical', href: `${SITE_URL}/` }],
   }),
   component: HomePage,

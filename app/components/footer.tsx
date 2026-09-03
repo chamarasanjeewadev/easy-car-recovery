@@ -1,5 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { Logo } from './logo'
+import { SERVICE_PAGES, VEHICLE_PAGES } from '~/lib/seo-pages'
+import { SeoPageLink } from './seo/seo-page-link'
 import {
   COMPANY_ADDRESS,
   COMPANY_NAME,
@@ -17,13 +19,35 @@ export function Footer() {
   return (
     <footer className="bg-inverse-surface text-inverse-on-surface">
       <div className="container-app py-16">
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
           <div className="col-span-2 max-w-[320px] md:col-span-1">
             <Logo light />
             <p className="mt-4 text-sm leading-relaxed opacity-70">
               Pay-as-you-go vehicle recovery across England, Scotland and Wales — a fixed price
               online, no yearly subscription.
             </p>
+          </div>
+          <div>
+            <div className="mb-4 text-[13px] font-bold uppercase tracking-wider opacity-85">Services</div>
+            {SERVICE_PAGES.map((p) => (
+              <SeoPageLink
+                key={p.slug}
+                page={p}
+                className="block py-1 text-sm opacity-70 transition-opacity hover:opacity-100"
+              >
+                {p.name}
+              </SeoPageLink>
+            ))}
+            <div className="mb-2 mt-4 text-[11px] font-bold uppercase tracking-wider opacity-60">By vehicle</div>
+            {VEHICLE_PAGES.map((p) => (
+              <SeoPageLink
+                key={p.slug}
+                page={p}
+                className="block py-1 text-sm opacity-70 transition-opacity hover:opacity-100"
+              >
+                {p.name}
+              </SeoPageLink>
+            ))}
           </div>
           <div>
             <div className="mb-4 text-[13px] font-bold uppercase tracking-wider opacity-85">Book</div>

@@ -7,7 +7,7 @@ import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 
 const NAV = [
   { label: 'Home', to: '/' },
-  { label: 'Services', to: '/#services' },
+  { label: 'Services', to: '/services' },
   { label: 'How it works', to: '/#how' },
   { label: 'Reviews', to: '/#reviews' },
   { label: 'FAQ', to: '/#faq' },

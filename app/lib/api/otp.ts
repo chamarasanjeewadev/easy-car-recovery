@@ -1,7 +1,7 @@
 // Browser-side WhatsApp/SMS number verification against the shared TowMyCar
 // backend. Deliberately runs in the browser (never from the Cloudflare Worker)
 // so the backend's per-IP+phone rate limit applies per visitor — the same
-// reason the free DVLA lookup is browser-side. easycarrecovery.co.uk is already
+// reason the free DVLA lookup is browser-side. easycarrecovery.uk must be
 // in the backend CORS allowlist.
 //
 // Security notes:

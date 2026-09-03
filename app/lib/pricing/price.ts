@@ -3,6 +3,7 @@
 // Stripe is the same "recommended" price the TowMyCar apps would show —
 // computed here, never taken from the client.
 import { calculatePriceRange, DEFAULT_PRICING_CONFIG } from './calculator'
+import { applyUrgencyPence } from './urgency'
 import type { PricingConfig } from './types'
 import { approxRoadMiles } from '~/lib/distance'
 import type { Size } from '~/lib/booking-search'
@@ -75,6 +76,14 @@ export interface ChargeInput {
   requestType?: string
   /** Selected vehicle size — used to estimate weight when the lookup has none. */
   size?: Size
+  /**
+   * Pick-up date (YYYY-MM-DD). When present, a same-day/next-day/weekend urgency
+   * multiplier is applied so the charge matches the per-day calendar price. Omit
+   * for the date-neutral "base" quote that seeds the calendar.
+   */
+  dateIso?: string
+  /** "Today" in the pricing timezone (Europe/London). Required with dateIso. */
+  todayIso?: string
 }
 
 export function computeChargePence(
@@ -92,5 +101,12 @@ export function computeChargePence(
     { requestType: input.requestType ?? 'RECOVERY', vehicleWeightKg, distanceMiles },
     config,
   )
-  return { amountPence: Math.round(range.recommended * 100), distanceMiles, vehicleWeightKg }
+  // Date-neutral base (whole pounds → pence), then the shared urgency layer so the
+  // amount charged equals the figure the calendar showed for the chosen date.
+  const basePence = Math.round(range.recommended * 100)
+  const amountPence =
+    input.dateIso && input.todayIso
+      ? applyUrgencyPence(basePence, input.dateIso, input.todayIso)
+      : basePence
+  return { amountPence, distanceMiles, vehicleWeightKg }
 }

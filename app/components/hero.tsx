@@ -18,9 +18,9 @@ export function Hero() {
             Recovery requests handled 24/7
           </span>
           <h1 className="text-[clamp(40px,6vw,72px)] font-bold leading-[1.05] tracking-[-0.025em]">
-            Stay moving,
+            Car recovery,
             <br />
-            no matter <span className="text-primary">what.</span>
+            booked <span className="text-primary">online.</span>
           </h1>
           <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-on-surface-variant">
             Check your reg, tell us your route, and book a vetted recovery driver across England,
@@ -42,7 +42,7 @@ export function Hero() {
           <div className="mt-9 flex flex-wrap gap-8 border-t border-surface-high pt-6">
             <Trust k="100+" v="Vetted recovery drivers" />
             <Trust k="24/7" v="Requests handled any time" />
-            <Trust k="£0 upfront" v="Pay nothing to book online" />
+            <Trust k="Fixed price" v="No membership or call-out fees" />
           </div>
         </div>
 

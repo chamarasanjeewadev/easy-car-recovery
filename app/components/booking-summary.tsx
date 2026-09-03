@@ -15,6 +15,8 @@ interface BookingSummaryProps {
   pricePence?: number | null
   /** True while the quote is being fetched. */
   priceLoading?: boolean
+  /** Small note under the price, e.g. an urgency/weekend surcharge explanation. */
+  priceNote?: ReactNode
   fine?: ReactNode
   ctaLabel: string
   onCta?: () => void
@@ -23,7 +25,7 @@ interface BookingSummaryProps {
   busyLabel?: string
 }
 
-export function BookingSummary({ rows, pricePence, priceLoading, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
+export function BookingSummary({ rows, pricePence, priceLoading, priceNote, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
   const showPrice = pricePence != null || priceLoading
   const cta = (
     <Button
@@ -53,15 +55,30 @@ export function BookingSummary({ rows, pricePence, priceLoading, fine, ctaLabel,
           ))}
         </div>
         {showPrice && (
-          <div className="mt-3 flex items-baseline justify-between gap-3 border-t border-surface-high pt-4">
-            <span className="text-sm text-on-surface-variant">Fixed price</span>
-            <strong className="text-[26px] font-bold tracking-[-0.02em]">
-              {pricePence != null ? formatPounds(pricePence) : 'Calculating…'}
-            </strong>
+          <div className="mt-3 border-t border-surface-high pt-4">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-sm text-on-surface-variant">Fixed price</span>
+              <strong className="text-[26px] font-bold tracking-[-0.02em]">
+                {pricePence != null ? formatPounds(pricePence) : 'Calculating…'}
+              </strong>
+            </div>
+            {priceNote && pricePence != null && (
+              <p className="mt-1 text-right text-xs text-on-surface-variant">{priceNote}</p>
+            )}
           </div>
         )}
         <div className="mt-3 border-t border-surface-high pt-4 text-sm text-on-surface-variant">
           Fixed price, paid securely online — a vetted recovery driver is assigned to your booking.
+        </div>
+        <div className="mt-4 space-y-2 border-t border-surface-high pt-4">
+          <div className="flex items-center gap-2 text-[13px] text-on-surface-variant">
+            <Icon name="lock" size={14} className="shrink-0 text-primary" />
+            Secure payment · 3D Secure · Stripe
+          </div>
+          <div className="flex items-center gap-2 text-[13px] text-on-surface-variant">
+            <Icon name="shield" size={14} className="shrink-0 text-primary" />
+            Money-back guarantee if we can't fulfil your recovery
+          </div>
         </div>
       </div>
 

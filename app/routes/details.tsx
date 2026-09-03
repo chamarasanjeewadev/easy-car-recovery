@@ -6,7 +6,7 @@ import {
   serviceNeedsDropoff,
   type Passengers,
 } from '~/lib/booking-search'
-import { formatLongDate } from '~/lib/calendar'
+import { formatLongDate, todayIso } from '~/lib/calendar'
 import { approxRoadMiles } from '~/lib/distance'
 import { lookupVehicleFn, titleCase, type VehicleResult } from '~/lib/api/lookup-vehicle'
 import { uploadPhotos } from '~/lib/api/photos'
@@ -23,6 +23,7 @@ import { Label } from '~/components/ui/label'
 import { useQuote } from '~/lib/use-quote'
 import { useOtp } from '~/lib/use-otp'
 import { phoneVerificationEnabled } from '~/lib/otp-verification'
+import { applyUrgencyPence, hasUrgencyPremium } from '~/lib/pricing/urgency'
 
 export const Route = createFileRoute('/details')({
   validateSearch: bookingSearchSchema,
@@ -46,7 +47,14 @@ type FieldErrors = Partial<Record<'firstName' | 'lastName' | 'email' | 'mobile' 
 function DetailsPage() {
   const search = Route.useSearch()
   const navigate = useNavigate()
-  const { amountPence, loading: priceLoading } = useQuote(search)
+  const { amountPence: baseAmountPence, loading: priceLoading } = useQuote(search)
+  const today = todayIso()
+  const selectedPence =
+    baseAmountPence != null && search.date
+      ? applyUrgencyPence(baseAmountPence, search.date, today)
+      : baseAmountPence
+  const showUrgencyNote =
+    baseAmountPence != null && !!search.date && hasUrgencyPremium(search.date, today)
 
   const needsDropoff = serviceNeedsDropoff(search.requestType)
   const hasVehicle = !!search.reg || !!search.manualVehicle
@@ -335,8 +343,9 @@ function DetailsPage() {
               },
               ...(needsDropoff ? [{ label: 'Distance', value: `${distanceMi} mi` }] : []),
             ]}
-            pricePence={amountPence}
+            pricePence={selectedPence}
             priceLoading={priceLoading}
+            priceNote={showUrgencyNote ? 'Includes urgency for your chosen date' : undefined}
             ctaLabel="Continue to payment"
             onCta={submit}
             disabled={uploading}

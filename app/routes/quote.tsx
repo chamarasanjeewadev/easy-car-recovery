@@ -25,6 +25,7 @@ import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
+import { SITE_URL } from '~/lib/site'
 
 export const Route = createFileRoute('/quote')({
   validateSearch: bookingSearchSchema,
@@ -37,7 +38,7 @@ export const Route = createFileRoute('/quote')({
           'Tell us your vehicle and route, get a fixed price, and book vetted recovery online in minutes.',
       },
     ],
-    links: [{ rel: 'canonical', href: 'https://easycarrecovery.co.uk/quote' }],
+    links: [{ rel: 'canonical', href: `${SITE_URL}/quote` }],
   }),
   component: QuotePage,
 })

@@ -14,11 +14,19 @@ import {
 } from '~/lib/site'
 import appCss from '~/styles/app.css?url'
 
+const OG_IMAGE = `${SITE_URL}/og.png`
+
+// NOTE: aggregateRating / review markup is intentionally omitted from this
+// LocalBusiness. Reviews shown on our own site about our own business
+// ("self-serving") are not eligible for review rich results under Google's
+// structured-data policy — true even when the reviews are real. Kept consistent
+// with towmycar-user-app/src/utils/schemas/reviewsSchema.ts.
 const JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'LocalBusiness',
   name: SITE_NAME,
   url: SITE_URL,
+  image: OG_IMAGE,
   telephone: SUPPORT_PHONE_DISPLAY.replace(/\s+/g, ''),
   email: SUPPORT_EMAIL,
   description: SITE_DESCRIPTION,
@@ -48,9 +56,13 @@ export const Route = createRootRoute({
       { property: 'og:title', content: `${SITE_NAME} — UK vehicle recovery, booked online` },
       { property: 'og:description', content: SITE_DESCRIPTION },
       { property: 'og:url', content: SITE_URL },
-      { name: 'twitter:card', content: 'summary' },
+      { property: 'og:image', content: OG_IMAGE },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '630' },
+      { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:title', content: `${SITE_NAME} — UK vehicle recovery, booked online` },
       { name: 'twitter:description', content: SITE_DESCRIPTION },
+      { name: 'twitter:image', content: OG_IMAGE },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },

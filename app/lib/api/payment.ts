@@ -45,6 +45,9 @@ export const createPaymentIntentFn = createServerFn({ method: 'POST' })
       toLng,
       requestType,
       size: data.size,
+      // Charge the urgency-adjusted amount for the chosen pick-up date so the
+      // Stripe total matches the price shown on the calendar.
+      date: data.date,
     })
 
     if (amountPence < MIN_PENCE) {

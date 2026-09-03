@@ -3,6 +3,7 @@ import { Icon, type IconName } from './icon'
 
 interface Service {
   ic: IconName
+  slug: string
   name: string
   desc: string
   variant?: 'feature' | 'dark'
@@ -11,28 +12,33 @@ interface Service {
 const SERVICES: Service[] = [
   {
     ic: 'truck',
+    slug: 'vehicle-recovery',
     name: 'Vehicle recovery',
     desc: 'Flatbed transport for cars, vans and light commercials up to 3.5t.',
     variant: 'feature',
   },
   {
     ic: 'battery',
+    slug: 'jump-start-battery',
     name: 'Jump start & battery',
     desc: 'Roadside boost and battery help for most makes and models.',
   },
   {
     ic: 'fuel',
+    slug: 'wrong-fuel-recovery',
     name: 'Wrong fuel & empty',
     desc: 'Recovery to a garage when the wrong fuel — or none — leaves you stranded.',
   },
   {
     ic: 'wrench',
+    slug: 'breakdown-transport',
     name: 'Breakdown transport',
     desc: 'Non-runners, accident-damaged and seized vehicles moved safely.',
     variant: 'dark',
   },
   {
     ic: 'zap',
+    slug: 'ev-recovery',
     name: 'EV recovery',
     desc: 'Flatbed handling for EVs and PHEVs, matched to drivers with the right kit.',
   },
@@ -49,6 +55,12 @@ export function ServicesGrid() {
         <h2 className="mt-3.5 text-[clamp(28px,3.6vw,44px)] font-bold leading-tight tracking-[-0.015em]">
           Whatever broke down, we'll move it.
         </h2>
+        <Link
+          to="/services"
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-colors hover:text-on-surface"
+        >
+          View all recovery services <Icon name="arrow-right" size={15} />
+        </Link>
       </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
         {SERVICES.map((s) => (
@@ -82,7 +94,8 @@ function ServiceCard({ service: s }: { service: Service }) {
 
   return (
     <Link
-      to="/quote"
+      to="/services/$slug"
+      params={{ slug: s.slug }}
       className={`group flex flex-col gap-4 rounded-[var(--radius-md)] p-7 shadow-[var(--shadow-card)] transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-[var(--shadow-float)] ${baseBg} ${featureColCls}`}
     >
       <div className={`grid h-13 w-13 h-[52px] w-[52px] place-items-center rounded-[var(--radius)] ${iconBg}`}>
@@ -91,7 +104,7 @@ function ServiceCard({ service: s }: { service: Service }) {
       <h3 className="text-[22px] font-bold tracking-tight">{s.name}</h3>
       <p className={`flex-1 text-[15px] leading-relaxed ${descCls}`}>{s.desc}</p>
       <div className="flex items-center justify-between">
-        <div className="text-[13px] font-semibold opacity-70">Book online</div>
+        <div className="text-[13px] font-semibold opacity-70">View service</div>
         <span
           className={`grid h-9 w-9 place-items-center rounded-full transition ${arrowBg} ${
             isFeature || isDark ? 'group-hover:-rotate-45' : ''

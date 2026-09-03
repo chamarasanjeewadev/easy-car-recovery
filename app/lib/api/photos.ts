@@ -1,6 +1,6 @@
 // Anonymous request-photo upload against the TowMyCar platform. Runs in the
 // browser (like the free DVLA lookup) so uploads use the visitor's connection,
-// and requires easycarrecovery.co.uk in the backend CORS allowlist. The backend
+// and requires easycarrecovery.uk in the backend CORS allowlist. The backend
 // returns a short-lived uploadToken + up to 3 presigned S3 PUT URLs; at booking
 // creation it links every photo uploaded under that token to the request, so we
 // only need to carry the token (not the S3 URLs) through the funnel.

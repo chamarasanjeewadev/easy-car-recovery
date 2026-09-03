@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Free DVLA lookup on the TowMyCar platform — the same check used on
 // towmycar.uk's home page. Called directly from the browser so the API's
 // per-IP rate limit (10 lookups / 15 min) applies per visitor, not to the
-// server's shared egress IPs. Requires easycarrecovery.co.uk in the
+// server's shared egress IPs. Requires easycarrecovery.uk in the
 // towmycar-backend CORS allowlist.
 const responseSchema = z.object({
   registrationNumber: z.string(),

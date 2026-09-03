@@ -57,3 +57,10 @@ export function formatLongDate(iso: string): string {
   const date = new Date(y, m - 1, d)
   return date.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
+
+// Local "today" as YYYY-MM-DD, for seeding the calendar and computing client-side
+// urgency. The server charge uses todayInLondon() authoritatively; this is display.
+export function todayIso(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}

@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { lookupVehicle, type VerifyResponse } from './submit-request'
+import { lookupVehicle, todayInLondon, type VerifyResponse } from './submit-request'
 import { computeChargePence, fetchPricingConfig } from '~/lib/pricing/price'
 import { requestTypeValues, sizeOptions } from '~/lib/booking-search'
 
@@ -18,6 +18,13 @@ const quoteInputSchema = z.object({
   toLng: z.number(),
   requestType: z.enum(requestTypeValues).optional(),
   size: z.enum(sizeOptions).optional(),
+  // Optional pick-up date (YYYY-MM-DD). When present the returned amount includes
+  // the date/urgency multiplier; when absent the amount is the date-neutral base
+  // that seeds the per-day calendar.
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 })
 
 export type QuoteInput = z.infer<typeof quoteInputSchema>
@@ -46,6 +53,10 @@ export async function computeQuotePence(
       weight: vehicle.weight ?? '',
       requestType: input.requestType,
       size: input.size,
+      // Only apply the urgency multiplier when a date is supplied (the charge
+      // path). getQuoteFn omits it to return the date-neutral calendar base.
+      dateIso: input.date,
+      todayIso: input.date ? todayInLondon() : undefined,
     },
     pricing.config,
   )

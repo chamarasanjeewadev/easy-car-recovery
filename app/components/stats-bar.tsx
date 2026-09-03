@@ -1,8 +1,8 @@
 const STATS = [
   { value: '50+', label: 'Service areas' },
-  { value: '15 min', label: 'Average response' },
-  { value: '99%', label: 'Success rate' },
-  { value: '100+', label: 'Recovery drivers' },
+  { value: '15 min', label: 'Avg network response' },
+  { value: 'Money-back', label: "If we can't fulfil" },
+  { value: '100+', label: 'Vetted recovery drivers' },
 ] as const
 
 export function StatsBar() {
