@@ -20,7 +20,7 @@ interface BookingSummaryProps {
   fine?: ReactNode
   ctaLabel: string
   onCta?: () => void
-  ctaHref?: { to: '/quote' | '/date' | '/details' | '/pay' | '/success'; search?: Record<string, unknown> }
+  ctaHref?: { to: '/quote' | '/date' | '/success'; search?: Record<string, unknown> }
   disabled?: boolean
   busyLabel?: string
   /** What's still needed before the CTA can proceed — shown under a disabled CTA. */

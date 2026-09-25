@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { successSearchSchema } from '~/lib/booking-search'
 import { formatLongDate } from '~/lib/calendar'
-import { finalizeBookingFn } from '~/lib/api/payment'
+import { finalizeBookingFromSessionFn } from '~/lib/api/payment'
 import { SUPPORT_PHONE_DISPLAY, SUPPORT_PHONE_TEL } from '~/lib/site'
 import { Icon } from '~/components/icon'
 import { Button } from '~/components/ui/button'
@@ -27,23 +27,16 @@ type FinalizeState =
   | { phase: 'not_paid' }
 
 function SuccessPage() {
-  const { requestId, payment_intent, redirect_status, paid, reg, date, slot, from, to } =
-    Route.useSearch()
+  const { session_id, reg, date, slot, from, to } = Route.useSearch()
   const niceDate = date ? formatLongDate(date) : 'your preferred day'
 
   const [state, setState] = useState<FinalizeState>(() =>
-    payment_intent && redirect_status !== 'failed'
-      ? { phase: 'confirming' }
-      : payment_intent
-        ? { phase: 'not_paid' }
-        : requestId != null
-          ? { phase: 'done', requestId, amountPence: paid ?? 0 }
-          : { phase: 'not_paid' },
+    session_id ? { phase: 'confirming' } : { phase: 'not_paid' },
   )
 
   const started = useRef(false)
   useEffect(() => {
-    if (!payment_intent || redirect_status === 'failed' || started.current) return
+    if (!session_id || started.current) return
     started.current = true
     let cancelled = false
 
@@ -51,7 +44,7 @@ function SuccessPage() {
       for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
         let result
         try {
-          result = await finalizeBookingFn({ data: { paymentIntentId: payment_intent } })
+          result = await finalizeBookingFromSessionFn({ data: { sessionId: session_id } })
         } catch {
           result = { ok: false as const, code: 'UNAVAILABLE' as const, message: '' }
         }
@@ -85,7 +78,7 @@ function SuccessPage() {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [payment_intent])
+  }, [session_id])
 
   if (state.phase === 'confirming') {
     return (
@@ -153,9 +146,8 @@ function SuccessPage() {
           </a>
           .
         </p>
-        {payment_intent && (
+        {(reg || from) && (
           <div className="my-8 rounded-[var(--radius-md)] bg-white p-6 shadow-[var(--shadow-card)]">
-            <Row label="Payment reference" value={payment_intent} />
             {reg && <Row label="Vehicle reg" value={reg.toUpperCase()} />}
             {from && <Row label="Route" value={`${from} → ${to ?? 'TBC'}`} />}
           </div>

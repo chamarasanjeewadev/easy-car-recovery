@@ -477,7 +477,7 @@ function QuotePage() {
             pricePence={amountPence}
             priceLoading={priceLoading}
             fine="Your fixed price is calculated from your route and vehicle — no hidden fees."
-            ctaLabel="Pick a time"
+            ctaLabel="See prices"
             onCta={proceed}
             disabled={!canProceed}
             ctaHint={canProceed ? undefined : proceedGaps.map((g) => journeyGapLabels[g])}

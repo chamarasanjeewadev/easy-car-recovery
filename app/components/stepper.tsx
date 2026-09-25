@@ -1,10 +1,11 @@
 import { Icon } from './icon'
 
 interface StepperProps {
-  step: 0 | 1 | 2 | 3
+  step: 0 | 1
 }
 
-const LABELS = ['Journey', 'Time', 'Details', 'Pay'] as const
+// Two on-site steps; secure payment happens on Stripe's hosted checkout after.
+const LABELS = ['Journey', 'Schedule & pay'] as const
 
 export function Stepper({ step }: StepperProps) {
   return (
