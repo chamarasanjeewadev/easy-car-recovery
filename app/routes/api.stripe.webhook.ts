@@ -2,6 +2,10 @@ import { createFileRoute } from '@tanstack/react-router'
 import Stripe from 'stripe'
 import { finalizeFromIntent, getStripe } from '~/lib/api/payment-core'
 
+// Booking payment now flows through hosted Checkout, so the durable backstop
+// listens for the Session's completion (tab closed after paying, backend down).
+// finalizeFromIntent stays idempotent via the booking_status metadata lock.
+
 // Stripe webhook — the durable backstop that creates the TowMyCar booking when
 // a customer paid but the success-page finalize never completed (tab closed,
 // backend down). Stripe redelivers non-2xx responses with backoff for days,
@@ -31,15 +35,23 @@ export const Route = createFileRoute('/api/stripe/webhook')({
           return new Response('Invalid signature', { status: 400 })
         }
 
-        if (event.type !== 'payment_intent.succeeded') {
+        if (event.type !== 'checkout.session.completed') {
           return new Response('Ignored', { status: 200 })
         }
-        const intent = event.data.object
-        if (intent.metadata?.source !== 'easy-car-recovery') {
+        const session = event.data.object
+        // Session-level metadata carries our source tag (set in buildCheckoutSessionParams).
+        if (session.metadata?.source !== 'easy-car-recovery') {
+          return new Response('Ignored', { status: 200 })
+        }
+        const pi =
+          typeof session.payment_intent === 'string'
+            ? session.payment_intent
+            : session.payment_intent?.id
+        if (!pi) {
           return new Response('Ignored', { status: 200 })
         }
 
-        const result = await finalizeFromIntent(intent.id)
+        const result = await finalizeFromIntent(pi)
         if (!result.ok && (result.code === 'UNAVAILABLE' || result.code === 'IN_FLIGHT')) {
           // Non-2xx -> Stripe redelivers later; by then the in-flight actor has
           // finished ('created' -> 200 no-op) or its stale claim is reclaimable.
