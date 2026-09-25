@@ -121,6 +121,30 @@ export type FinalizeResult =
  *   otherwise            -> claim and POST; backend duplicate detection closes
  *                           the residual double-claim window.
  */
+/**
+ * Finalize from a hosted-Checkout Session id (cs_…). Resolves the Session's
+ * PaymentIntent and delegates to finalizeFromIntent, which owns all the
+ * validation and the idempotent booking claim. Used by the /success page and
+ * the checkout.session.completed webhook.
+ */
+export async function finalizeFromSession(sessionId: string): Promise<FinalizeResult> {
+  const s = getStripe()
+  let session: Stripe.Checkout.Session
+  try {
+    session = await s.checkout.sessions.retrieve(sessionId)
+  } catch {
+    return { ok: false, code: 'NOT_PAID', message: 'Payment not found.' }
+  }
+  const pi =
+    typeof session.payment_intent === 'string'
+      ? session.payment_intent
+      : session.payment_intent?.id
+  if (!pi || session.payment_status !== 'paid') {
+    return { ok: false, code: 'NOT_PAID', message: 'Payment was not completed.' }
+  }
+  return finalizeFromIntent(pi)
+}
+
 export async function finalizeFromIntent(paymentIntentId: string): Promise<FinalizeResult> {
   const s = getStripe()
 

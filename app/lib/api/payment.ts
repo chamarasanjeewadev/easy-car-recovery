@@ -139,6 +139,8 @@ export const createCheckoutSessionFn = createServerFn({ method: 'POST' })
     return { url: session.url }
   })
 
+// Temporary: PI-based finalize, still used by /success until Task 4 switches it
+// to session-based. Removed in the cleanup task.
 export const finalizeBookingFn = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ paymentIntentId: z.string().startsWith('pi_') }))
   .handler(async ({ data }) => {
@@ -147,6 +149,22 @@ export const finalizeBookingFn = createServerFn({ method: 'POST' })
       return await finalizeFromIntent(data.paymentIntentId)
     } catch (e) {
       console.error('finalizeBookingFn failed:', e)
+      return {
+        ok: false as const,
+        code: 'UNAVAILABLE' as const,
+        message: 'We could not confirm your booking yet. Your payment is safe — please wait a moment.',
+      }
+    }
+  })
+
+export const finalizeBookingFromSessionFn = createServerFn({ method: 'POST' })
+  .inputValidator(z.object({ sessionId: z.string().startsWith('cs_') }))
+  .handler(async ({ data }) => {
+    const { finalizeFromSession } = await import('./payment-core')
+    try {
+      return await finalizeFromSession(data.sessionId)
+    } catch (e) {
+      console.error('finalizeBookingFromSessionFn failed:', e)
       return {
         ok: false as const,
         code: 'UNAVAILABLE' as const,
