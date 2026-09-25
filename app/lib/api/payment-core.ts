@@ -114,7 +114,8 @@ export type FinalizeResult =
 
 /**
  * Creates the TowMyCar booking for a paid intent. Shared by the success page's
- * finalizeBookingFn and the Stripe webhook. Always re-retrieves the intent so
+ * the success page (via finalizeFromSession) and the Stripe webhook. Always
+ * re-retrieves the intent so
  * the booking_status advisory lock reflects the latest state, then:
  *   'created'            -> return the existing booking, no second POST
  *   fresh 'creating'     -> IN_FLIGHT (caller retries; covers the racing actor)

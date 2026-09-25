@@ -117,33 +117,10 @@ export const journeyGapLabels: Record<JourneyGap, string> = {
   slot: 'Choose a pick-up time',
 }
 
-// /pay carries the contact details collected on /details on top of the journey
-// params. PII-in-URL tradeoff is accepted: funnel pages are noindex and state
-// is URL-driven throughout the app.
-export const paySearchSchema = bookingSearchSchema.extend({
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  email: z.string().optional(),
-  mobile: z.string().optional(),
-  notes: z.string().optional(),
-  termsAcceptedAt: z.string().optional(),
-  // Photos are uploaded to S3 on /details; only the short link token rides
-  // through the URL/flow (not the S3 URLs) — the backend links photos by token.
-  uploadToken: z.string().optional(),
-})
-
-export type PaySearch = z.infer<typeof paySearchSchema>
-
 export const successSearchSchema = z.object({
-  requestId: z.coerce.number().optional(),
-  // Stripe appends payment_intent/payment_intent_client_secret/redirect_status
-  // to the return_url on redirect flows (3DS); the non-redirect path navigates
-  // here with payment_intent + paid explicitly.
-  payment_intent: z.string().optional(),
-  payment_intent_client_secret: z.string().optional(),
-  redirect_status: z.string().optional(),
-  /** Amount paid in pence. */
-  paid: z.coerce.number().optional(),
+  // Hosted Checkout returns to success_url with the Session id; /success resolves
+  // it to the PaymentIntent server-side and finalizes the booking.
+  session_id: z.string().optional(),
   reg: z.string().optional(),
   date: z.string().optional(),
   slot: z.string().optional(),

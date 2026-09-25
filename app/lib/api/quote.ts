@@ -33,7 +33,7 @@ export type QuoteInput = z.infer<typeof quoteInputSchema>
  * Computes the recovery charge (in pence) from the pricing algorithm: looks up
  * the vehicle's kerb weight, fetches the live pricing config (falling back to
  * DEFAULT_PRICING_CONFIG), then runs the mirrored TowMyCar calculator. Shared by
- * getQuoteFn (display) and createPaymentIntentFn (the actual charge).
+ * getQuoteFn (display) and createCheckoutSessionFn (the actual charge).
  */
 export async function computeQuotePence(
   base: string,
