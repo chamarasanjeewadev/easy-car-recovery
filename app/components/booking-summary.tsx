@@ -23,9 +23,11 @@ interface BookingSummaryProps {
   ctaHref?: { to: '/quote' | '/date' | '/details' | '/pay' | '/success'; search?: Record<string, unknown> }
   disabled?: boolean
   busyLabel?: string
+  /** What's still needed before the CTA can proceed — shown under a disabled CTA. */
+  ctaHint?: string[]
 }
 
-export function BookingSummary({ rows, pricePence, priceLoading, priceNote, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel }: BookingSummaryProps) {
+export function BookingSummary({ rows, pricePence, priceLoading, priceNote, fine, ctaLabel, onCta, ctaHref, disabled, busyLabel, ctaHint }: BookingSummaryProps) {
   const showPrice = pricePence != null || priceLoading
   const cta = (
     <Button
@@ -82,7 +84,7 @@ export function BookingSummary({ rows, pricePence, priceLoading, priceNote, fine
         </div>
       </div>
 
-      {ctaHref ? (
+      {ctaHref && !disabled ? (
         <Button asChild size="lg" className="w-full">
           <Link to={ctaHref.to} search={ctaHref.search as never}>
             {ctaLabel} <Icon name="arrow-right" size={16} />
@@ -90,6 +92,17 @@ export function BookingSummary({ rows, pricePence, priceLoading, priceNote, fine
         </Button>
       ) : (
         cta
+      )}
+
+      {ctaHint && ctaHint.length > 0 && (
+        <ul className="space-y-1.5 rounded-[var(--radius)] bg-[rgba(176,0,32,0.06)] px-4 py-3 text-[13px] font-medium text-[#b00020]">
+          {ctaHint.map((item) => (
+            <li key={item} className="flex items-center gap-2">
+              <Icon name="arrow-right" size={12} className="shrink-0" />
+              {item}
+            </li>
+          ))}
+        </ul>
       )}
 
       {fine && <p className="text-center text-xs text-on-surface-variant">{fine}</p>}

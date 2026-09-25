@@ -83,6 +83,40 @@ export function requestTypeLabel(requestType?: string | null): string {
   return requestTypeOptions.find((o) => o.value === requestType)?.label ?? 'Car recovery / tow'
 }
 
+// Single source of truth for "is the journey complete enough to proceed".
+// /quote gates the vehicle+location subset before /date; /details requires the
+// full set (adds date + slot) before payment. These used to be computed inline
+// on each page and drifted: /quote let you advance with no coords / no reg, then
+// /details dead-ended to "finish your journey details first". One predicate keeps
+// the guards in lockstep so that can't happen again.
+export type JourneyGap = 'vehicle' | 'pickup' | 'dropoff' | 'date' | 'slot'
+
+export function journeyGaps(s: BookingSearch): JourneyGap[] {
+  const gaps: JourneyGap[] = []
+  // A reg string OR a manual vehicle — presence only; the server re-verifies at pay time.
+  if (!s.reg && !s.manualVehicle) gaps.push('vehicle')
+  // Coordinates (not just text) are required: the price is computed from lat/lng,
+  // which only exist once a location is picked from the suggestions.
+  if (!s.from || s.fromLat == null || s.fromLng == null) gaps.push('pickup')
+  if (serviceNeedsDropoff(s.requestType) && (!s.to || s.toLat == null || s.toLng == null))
+    gaps.push('dropoff')
+  if (!s.date) gaps.push('date')
+  if (!s.slot) gaps.push('slot')
+  return gaps
+}
+
+export function isJourneyReady(s: BookingSearch): boolean {
+  return journeyGaps(s).length === 0
+}
+
+export const journeyGapLabels: Record<JourneyGap, string> = {
+  vehicle: 'Add your vehicle registration',
+  pickup: 'Select your pick-up location from the suggestions',
+  dropoff: 'Select your drop-off location from the suggestions',
+  date: 'Choose a pick-up date',
+  slot: 'Choose a pick-up time',
+}
+
 // /pay carries the contact details collected on /details on top of the journey
 // params. PII-in-URL tradeoff is accepted: funnel pages are noindex and state
 // is URL-driven throughout the app.

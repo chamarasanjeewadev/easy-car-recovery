@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 import {
   bookingSearchSchema,
+  isJourneyReady,
   serviceNeedsDropoff,
   type Passengers,
 } from '~/lib/booking-search'
@@ -57,19 +58,11 @@ function DetailsPage() {
     baseAmountPence != null && !!search.date && hasUrgencyPremium(search.date, today)
 
   const needsDropoff = serviceNeedsDropoff(search.requestType)
-  const hasVehicle = !!search.reg || !!search.manualVehicle
 
-  // Drop-off is required for relocation services: the charged price is computed
-  // from the pick-up -> drop-off distance, so it must never fall back to a guess.
-  // On-site services (jump-start / fuel / scrap) price against the pick-up only.
-  const ready =
-    hasVehicle &&
-    !!search.from &&
-    search.fromLat != null &&
-    search.fromLng != null &&
-    (needsDropoff ? !!search.to && search.toLat != null && search.toLng != null : true) &&
-    !!search.date &&
-    !!search.slot
+  // Shared with /quote's gate so the two can't drift. Drop-off coords are only
+  // required for relocation services (see journeyGaps); on-site services price
+  // against the pick-up alone.
+  const ready = isJourneyReady(search)
 
   const [vehicle, setVehicle] = useState<VehicleResult | null>(null)
   const [firstName, setFirstName] = useState('')

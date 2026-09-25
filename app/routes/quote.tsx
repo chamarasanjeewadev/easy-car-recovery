@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   bookingSearchSchema,
   conditionLabel,
+  journeyGaps,
+  journeyGapLabels,
   requestTypeOptions,
   requestTypeLabel,
   serviceNeedsDropoff,
@@ -194,6 +196,24 @@ function QuotePage() {
   const distanceUnknown = needsDropoff && (!fromCoord || !toCoord)
   const vehicleVerified = !!vehicle && !vehicleErr
   const manualSaved = !vehicleVerified && !!search.manualVehicle && !!search.makeModel
+
+  // Gate progression on the same journey requirements /details enforces, but
+  // evaluate them here — where the fields live — so the user gets specific inline
+  // guidance instead of sailing through and hitting a dead-end two steps later.
+  // A typed-but-not-looked-up reg counts as present (we persist it on proceed),
+  // so the CTA isn't blocked just because the "Look up" button wasn't pressed.
+  const pendingReg = regInput.replace(/\s+/g, '').toUpperCase()
+  const proceedSearch = { ...search, requestType, reg: search.reg || pendingReg || undefined }
+  const proceedGaps = journeyGaps(proceedSearch).filter((g) => g !== 'date' && g !== 'slot')
+  const canProceed = proceedGaps.length === 0
+
+  const proceed = () => {
+    if (!canProceed) return
+    navigate({
+      to: '/date',
+      search: { ...search, size, condition, requestType, reg: search.reg || pendingReg || undefined },
+    })
+  }
 
   return (
     <div className="container-app py-6 md:py-8">
@@ -458,7 +478,9 @@ function QuotePage() {
             priceLoading={priceLoading}
             fine="Your fixed price is calculated from your route and vehicle — no hidden fees."
             ctaLabel="Pick a time"
-            ctaHref={{ to: '/date', search: { ...search, size, condition, requestType } }}
+            onCta={proceed}
+            disabled={!canProceed}
+            ctaHint={canProceed ? undefined : proceedGaps.map((g) => journeyGapLabels[g])}
           />
           <p className="mt-3 text-center text-xs text-on-surface-variant">
             Pay securely online — fully refunded if we can't fulfil your recovery.
