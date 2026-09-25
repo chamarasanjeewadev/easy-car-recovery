@@ -5,6 +5,27 @@
 // the metadata `finalizeFromIntent` already expects — no finalize changes needed.
 import type Stripe from 'stripe'
 
+// Canonical ECR hosts. Kept here (not imported from ~/lib/site) so this module
+// stays node-testable without alias resolution.
+const ALLOWED_CHECKOUT_HOSTS = ['easycarrecovery.uk', 'www.easycarrecovery.uk']
+
+/**
+ * True if `value` is a URL we may hand to Stripe as a success/cancel target:
+ * an https ECR host, or localhost/127.0.0.1 (any port) for dev. Everything else
+ * is rejected so a crafted createCheckoutSessionFn call can't produce an
+ * ECR-branded Checkout session that redirects to an attacker origin.
+ */
+export function isAllowedCheckoutOrigin(value: string): boolean {
+  let u: URL
+  try {
+    u = new URL(value)
+  } catch {
+    return false
+  }
+  if (u.hostname === 'localhost' || u.hostname === '127.0.0.1') return true
+  return u.protocol === 'https:' && ALLOWED_CHECKOUT_HOSTS.includes(u.hostname)
+}
+
 export function buildCheckoutSessionParams(args: {
   amountPence: number
   email: string

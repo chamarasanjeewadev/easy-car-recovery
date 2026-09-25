@@ -1,7 +1,22 @@
 // Standalone test for the pure Stripe Checkout Session param builder.
 // Run: node --experimental-strip-types scripts/test-checkout-params.ts
 import assert from 'node:assert/strict'
-import { buildCheckoutSessionParams } from '../app/lib/api/checkout-params.ts'
+import { buildCheckoutSessionParams, isAllowedCheckoutOrigin } from '../app/lib/api/checkout-params.ts'
+
+// Open-redirect guard: only our own hosts (and localhost for dev) may be used
+// as Stripe success/cancel URLs; anything else is rejected so a crafted
+// server-fn call can't mint an ECR-branded session that redirects off-site.
+assert.equal(isAllowedCheckoutOrigin('https://easycarrecovery.uk'), true)
+assert.equal(isAllowedCheckoutOrigin('https://www.easycarrecovery.uk'), true)
+assert.equal(isAllowedCheckoutOrigin('http://localhost:3000'), true)
+assert.equal(isAllowedCheckoutOrigin('http://127.0.0.1:5173'), true)
+assert.equal(isAllowedCheckoutOrigin('http://localhost:3000/date?x=1'), true)
+assert.equal(isAllowedCheckoutOrigin('https://evil.example'), false)
+assert.equal(isAllowedCheckoutOrigin('https://easycarrecovery.uk.evil.com'), false)
+assert.equal(isAllowedCheckoutOrigin('http://easycarrecovery.uk'), false) // http on prod host
+assert.equal(isAllowedCheckoutOrigin('not a url'), false)
+console.log('ok - origin allowlist')
+
 
 const p = buildCheckoutSessionParams({
   amountPence: 17600,

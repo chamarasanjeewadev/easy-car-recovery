@@ -2,10 +2,11 @@ import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { bookingInputSchema, todayInLondon } from './submit-request'
 import { computeQuotePence } from './quote'
-import { buildCheckoutSessionParams } from './checkout-params'
+import { buildCheckoutSessionParams, isAllowedCheckoutOrigin } from './checkout-params'
 import { MIN_PENCE } from '~/lib/pricing/price'
 import { normalizeUkMobile } from '~/lib/phone'
 import { serviceNeedsDropoff } from '~/lib/booking-search'
+import { SITE_URL } from '~/lib/site'
 
 // NOTE: Stripe/booking internals live in payment-core.ts and are imported only
 // inside handlers, so the server-fn compiler keeps them out of the client bundle.
@@ -62,13 +63,22 @@ export const createCheckoutSessionFn = createServerFn({ method: 'POST' })
     if (data.from) summary.set('from', data.from)
     if (data.to) summary.set('to', data.to)
 
+    // Never trust the client for redirect targets: an ECR-branded Checkout
+    // session that bounces to an attacker origin is a phishing vector. Only our
+    // own hosts (or localhost in dev) are accepted; anything else falls back to
+    // the canonical site.
+    const safeOrigin = isAllowedCheckoutOrigin(data.origin) ? data.origin : SITE_URL
+    const safeCancelUrl = isAllowedCheckoutOrigin(data.cancelUrl)
+      ? data.cancelUrl
+      : `${safeOrigin}/date`
+
     const params = buildCheckoutSessionParams({
       amountPence,
       email: data.email,
       description,
       metadata: bookingToMetadata(data, amountPence, distanceMiles),
-      origin: data.origin,
-      cancelUrl: data.cancelUrl,
+      origin: safeOrigin,
+      cancelUrl: safeCancelUrl,
       summaryQuery: summary.toString(),
     })
 
